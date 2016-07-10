@@ -95,11 +95,11 @@ public class Bubble {
         //Check to see if the bubbles are in range of the touch and if so
         //direct them to the touch location.
         if (x_touch_difference < 200){
-            if(y_touch_difference<200) {
+            if(y_touch_difference < 200) {
                 velocity.x = (x_touch_location - position.x);
                 velocity.y = (y_touch_location - position.y);
             }
-        }//this is a test
+        }//this is a test. This test is finished.
     }
     public void walk(){
 
