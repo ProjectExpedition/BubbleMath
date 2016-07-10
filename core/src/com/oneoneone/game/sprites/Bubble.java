@@ -84,8 +84,8 @@ public class Bubble {
      */
     public void grab_bubble(){
         //the following retrieve the x and y coordinates of the current touch.
-        float x_touch_location = Gdx.input.getX();
-        float y_touch_location = Gdx.input.getY();
+        float x_touch_location = Gdx.input.getX()-50;
+        float y_touch_location = BubbleMath.HEIGHT-Gdx.input.getY()-50;
 
         //the following creates a pair of variables to check the difference between
         //the bubble position and the touch location.
@@ -94,10 +94,10 @@ public class Bubble {
 
         //Check to see if the bubbles are in range of the touch and if so
         //direct them to the touch location.
-        if (x_touch_difference < 200){
-            if(y_touch_difference < 200) {
-                velocity.x = (x_touch_location - position.x);
-                velocity.y = (y_touch_location - position.y);
+        if (x_touch_difference < 50){
+            if(y_touch_difference < 50) {
+                velocity.x = 100*(x_touch_location - position.x);
+                velocity.y = 100*(y_touch_location - position.y);
             }
         }//this is a test. This test is finished.
     }

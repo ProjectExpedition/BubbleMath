@@ -70,8 +70,9 @@ public class PlayState extends State{
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(bg,0,0);
+
         for (Bubble bub: bubbles){
-        sb.draw(bub.getBubble(),bub.getPosition().x,bub.getPosition().y);
+            sb.draw(bub.getBubble(),bub.getPosition().x,bub.getPosition().y);
         }
         sb.draw(redSpawner, BubbleMath.WIDTH/4-(blueSpawner.getWidth()/4),0);
         sb.draw(blueSpawner, 3*BubbleMath.WIDTH/4-(blueSpawner.getWidth()/4),0);
