@@ -99,7 +99,7 @@ public class Bubble {
                 velocity.x = (x_touch_location - position.x);
                 velocity.y = (y_touch_location - position.y);
             }
-        }
+        }//this is a test
     }
     public void walk(){
 
