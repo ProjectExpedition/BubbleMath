@@ -26,7 +26,6 @@ public class PlayState extends State{
     public PlayState(GameStateManager gsm) {
         super(gsm);
         bubble = new Bubble();
-        //dtsum = TimeUtils.nanoTime();
         redSpawner = new Texture("red_spawner.png");
         blueSpawner = new Texture("blue_spawner.png");
         bg = new Texture("play_background.png");
@@ -51,19 +50,9 @@ public class PlayState extends State{
             bubbles.add(new Bubble());
             dtsum = 0;
         }
-//        if (TimeUtils.timeSinceNanos(timer) > 1000000000) {
-//            bubbles.add(new Bubble());
-//            timer = TimeUtils.nanoTime();
-//        }
         for (Bubble bub: bubbles){
             bub.update(dt);
-//            for (Bubble bubb: bubbles)
-//            if(bub.collides(bubb.getBound())){
-//
-//            }
-
         }
-
     }
 
     @Override

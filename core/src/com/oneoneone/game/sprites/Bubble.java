@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.BubbleMath;
 
 import java.util.Random;
@@ -30,14 +31,14 @@ public class Bubble {
         value = (rand.nextInt()%RANGE) - (RANGE/2);
         velocity = new Vector2(0,5);
 
-        if (value <= 0) {//red
+        if (value <= 0) {
             texture = new Texture("blue.png");
             position = new Vector2(REDSTARTX,ALLSTARTY);
-        } else if(value >0){ //blue
+        } else if(value >0){
             texture = new Texture("red.png");
             position = new Vector2(BLUESTARTX,ALLSTARTY);
         }
-        bound = new Circle(position.x,position.y,texture.getWidth()/2);
+        bound = new Circle(position.x + (texture.getWidth()/2),position.y+texture.getWidth()/2,texture.getWidth()/2);
     }
 
     public void update(float dt){
@@ -48,6 +49,7 @@ public class Bubble {
         position.add(velocity.x, velocity.y);
         cornerCollision();
         velocity.scl(1/dt);
+        bound.setPosition(position);
     }
     public void cornerCollision(){
         if(position.y < 0){
@@ -64,9 +66,14 @@ public class Bubble {
         return position;
     }
 
-    public boolean collides(Circle C){
-        return C.overlaps(bound);
-    }
+//    public boolean collides(Array<Bubble> bubbles){
+//        int sum = 0;
+//        for (Bubble bub: bubbles){
+//            if (bound.overlaps(bub.getBound()));
+//        ++sum;
+//        }
+//        return ;
+//    }
 
     public int getValue() {
         return value;
@@ -101,12 +108,12 @@ public class Bubble {
             }
         }//this is a test. This test is finished.
     }
-    public void walk(){
-
-        velocity.y = rand.nextInt()%500;
-        velocity.x = rand.nextInt()%500;
-    }
-
+//    public void walk(){
+//
+//        velocity.y = rand.nextInt()%500;
+//        velocity.x = rand.nextInt()%500;
+//    }
+//
     public Circle getBound() {
         return bound;
     }

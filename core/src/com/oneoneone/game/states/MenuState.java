@@ -33,7 +33,7 @@ public class MenuState extends State {
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
-        sb.draw(background,0,0, BubbleMath.WIDTH,BubbleMath.HEIGHT);
+        sb.draw(background,0,0);
         sb.draw(startBtn,(BubbleMath.WIDTH/2)-(startBtn.getWidth()/2),(BubbleMath.HEIGHT/2)-(startBtn.getHeight()/2));
         sb.end();
     }
