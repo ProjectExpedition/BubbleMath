@@ -3,6 +3,7 @@ package com.oneoneone.game.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
@@ -20,6 +21,7 @@ public class PlayState extends State{
     private Texture blueSpawner;
     private float dtsum = 0;
     private Array<Bubble> bubbles;
+    private Vector2 touch_location;
 
     public PlayState(GameStateManager gsm) {
         super(gsm);
@@ -36,7 +38,7 @@ public class PlayState extends State{
     protected void handleInput() {
         if(Gdx.input.isTouched()) {
             for (Bubble bub: bubbles){
-                bub.walk();
+                bub.grab_bubble();
             }
         }
     }

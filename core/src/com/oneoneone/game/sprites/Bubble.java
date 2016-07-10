@@ -1,5 +1,6 @@
 package com.oneoneone.game.sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
@@ -74,7 +75,34 @@ public class Bubble {
     public Texture getBubble() {
         return texture;
     }
+
+    /* grab_bubble() is called on touch and directs bubbles within 200 units
+     * towards the touch location. This is not working perfectly as yet.
+     * Current issues (10/07/2016):
+     * Bubbles stuck at top of screen, and grabbing from outside bubble range.
+     * Screen size issues.
+     */
+    public void grab_bubble(){
+        //the following retrieve the x and y coordinates of the current touch.
+        float x_touch_location = Gdx.input.getX();
+        float y_touch_location = Gdx.input.getY();
+
+        //the following creates a pair of variables to check the difference between
+        //the bubble position and the touch location.
+        float x_touch_difference = Math.abs(position.x-x_touch_location);
+        float y_touch_difference = Math.abs(position.y-y_touch_location);
+
+        //Check to see if the bubbles are in range of the touch and if so
+        //direct them to the touch location.
+        if (x_touch_difference < 200){
+            if(y_touch_difference<200) {
+                velocity.x = (x_touch_location - position.x);
+                velocity.y = (y_touch_location - position.y);
+            }
+        }
+    }
     public void walk(){
+
         velocity.y = rand.nextInt()%500;
         velocity.x = rand.nextInt()%500;
     }
