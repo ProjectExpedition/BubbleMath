@@ -57,15 +57,15 @@ public class Bubble {
         if(position.y < 0){
             position.y = 0;
             velocity.y = -velocity.y;}
-        if(position.y > (BubbleMath.HEIGHT - 100)){
+        if(position.y > (BubbleMath.HEIGHT - texture.getWidth())){
             velocity.y = -velocity.y;
-            position.y = BubbleMath.HEIGHT - 100;}//-100 because just HEIGHT moves bubble off screen
+            position.y = BubbleMath.HEIGHT - texture.getWidth();}//-100 because just HEIGHT moves bubble off screen
         if(position.x < 0){
             position.x = 0;
             velocity.x = -velocity.x;
         }
-        if(position.x > (BubbleMath.WIDTH - 100)){
-            position.x = BubbleMath.WIDTH - 100;
+        if(position.x > (BubbleMath.WIDTH - texture.getWidth())){
+            position.x = BubbleMath.WIDTH - texture.getWidth();
             velocity.x = -velocity.x;
         }
     }
