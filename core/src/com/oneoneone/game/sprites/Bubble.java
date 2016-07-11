@@ -44,7 +44,7 @@ public class Bubble {
         velocity = new Vector2(rand.nextInt(100),rand.nextInt(100));
         if (value == true) {
             texture = new Texture("blue.png");
-            position = new Vector2(BLUESTARTX,0);
+            position = new Vector2(BLUESTARTX,BubbleMath.HEIGHT);
         } else {
             texture = new Texture("red.png");
             position = new Vector2(REDSTARTX,0);
@@ -56,8 +56,11 @@ public class Bubble {
     }
 
     public void update(float dt){ //dt = amount of time passed since last update
-        //if(position.y > 0) {
+        if(value) {
+            velocity.add(0, -BUOYANCY);}
+        else{
             velocity.add(0, BUOYANCY);
+        }
         //}
         velocity.scl(dt);
         position.add(velocity.x, velocity.y);
