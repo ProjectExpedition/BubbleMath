@@ -13,11 +13,11 @@ import com.oneoneone.game.sprites.Bubble;
 /**
  * Created by David on 9/07/2016.
  */
-public class PlayState extends State{
+public class PlayState extends State {
     public static final int SCREEN_WIDTH = Gdx.graphics.getWidth();
     public static final int SCREEN_HEIGHT = Gdx.graphics.getHeight();
-    public static final float SCALEX = (float)BubbleMath.WIDTH/SCREEN_WIDTH;
-    public static final float SCALEY = (float)BubbleMath.HEIGHT/SCREEN_HEIGHT;
+    public static final float SCALEX = (float) BubbleMath.WIDTH / SCREEN_WIDTH;
+    public static final float SCALEY = (float) BubbleMath.HEIGHT / SCREEN_HEIGHT;
     private Texture bg;
     private Texture redSpawner;
     private Texture blueSpawner;
@@ -37,18 +37,19 @@ public class PlayState extends State{
     }
 
     /* handleInput() checks if the person has touched the screen
-    *
+    *  A maximum of 2 touch pointers are counted
     */
     @Override
     protected void handleInput() {
-        for(int i = 0; i<2; i++) {
-            if (Gdx.input.isTouched(i)) {//multitouch
+        for (int i = 0; i < 2; i++) {       //initializes to count maximum of two touch pointers
+            if (Gdx.input.isTouched(i)) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
                 for (Bubble bub : bubbles) {
                     bub.grab_bubble(i);
                 }
             }
         }
     }
+
     /* update(float dt) is called in GameStateManager (see states.peek().update(dt))
     * updates the mathematics of everything that happens; velocity, coordinates, inputs,
     * checking,etc
@@ -61,25 +62,26 @@ public class PlayState extends State{
             bubbles.add(new Bubble()); //spawns bubble
             dtsum = 0; //resets sum poll time
         }
-        for (Bubble bub: bubbles){//attempt at brute force collision detection TODO Collision Detection
-            for (int i=0;i>bubbles.size; i++) {
+        for (Bubble bub : bubbles) {//attempt at brute force collision detection TODO Collision Detection
+            for (int i = 0; i > bubbles.size; i++) {
                 bub.collides(bubbles.get(i).getBound());//inserts circle bound of all bubbles into current bubble
             }
             bub.update(dt); //calculates position changes to bubble
         }
     }
+
     /* render(float dt) draws all sprites to SpriteBatch declared in BubbleMath
     * draws after all positions and conditions have been calculated in update in BubbleMath render
     */
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
-        sb.draw(bg,0,0);
-        for (Bubble bub: bubbles){
-            sb.draw(bub.getBubble(),bub.getPosition().x,bub.getPosition().y);
+        sb.draw(bg, 0, 0);
+        for (Bubble bub : bubbles) {
+            sb.draw(bub.getBubbleSprite(), bub.getPosition().x, bub.getPosition().y, bub.getBubbleScale(), bub.getBubbleScale());
         }
-        sb.draw(redSpawner, BubbleMath.WIDTH/4-(blueSpawner.getWidth()/4),0);
-        sb.draw(blueSpawner, 3*BubbleMath.WIDTH/4-(blueSpawner.getWidth()/4),0);
+        sb.draw(redSpawner, BubbleMath.WIDTH / 4 - (blueSpawner.getWidth() / 4), 0);
+        sb.draw(blueSpawner, 3 * BubbleMath.WIDTH / 4 - (blueSpawner.getWidth() / 4), 0);
         sb.end();
     }
 

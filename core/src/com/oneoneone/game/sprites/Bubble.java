@@ -2,6 +2,7 @@ package com.oneoneone.game.sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -21,6 +22,8 @@ public class Bubble {
     private static final int ALLSTARTY = 150;   //starting y coordinate for red and blue
     private static final int BUOYANCY = 1;      //velocity added each update to give effect of buoyancy
     private Texture texture;    //bubble texture (red or blue) stored here
+    private int bubbleScale;    //bubble size scale calculated in Bubble()
+    private Sprite bubbleSprite;//sprite container for bubbles
     private Vector2 velocity;   //speed at which bubble moves
     private Vector2 position;   //position of bubble
     private int value;          //number represented on screen for bubble, -ve = red, +ve = blue
@@ -30,17 +33,19 @@ public class Bubble {
     public Bubble() {
         Random rand = new Random();
         touched = false;
-        value = (rand.nextInt()%RANGE) - (RANGE/2);
+        value = (rand.nextInt()%RANGE)/* - (RANGE/2)*/;
         velocity = new Vector2(rand.nextInt()%50,rand.nextInt()%20);
-
-        if (value <= 0) {
+        if (value <= 49) {
             texture = new Texture("blue.png");
             position = new Vector2(BLUESTARTX,ALLSTARTY);
-        } else if(value > 0){
+        } else if(value > 49){
             texture = new Texture("red.png");
             position = new Vector2(REDSTARTX,ALLSTARTY);
         }
-        bound = new Circle(position.x + (texture.getWidth()/2),position.y+texture.getWidth()/2,texture.getWidth()/2);
+        bubbleScale = rand.nextInt(5)*texture.getWidth();
+        bubbleSprite=new Sprite(texture);
+        //bubbleSprite.setSize(bubbleScale,bubbleScale);
+        bound = new Circle(position.x + (bubbleScale/2),position.y+bubbleScale/2,bubbleScale/2);
     }
 
     public void update(float dt){ //dt = amount of time passed since last update
@@ -120,6 +125,14 @@ public class Bubble {
 
     public Texture getBubble() {
         return texture;
+    }
+
+    public Sprite getBubbleSprite(){
+        return bubbleSprite;
+    }
+
+    public int getBubbleScale(){
+        return bubbleScale;
     }
 }
 
