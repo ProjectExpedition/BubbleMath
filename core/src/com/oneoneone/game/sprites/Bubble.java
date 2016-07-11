@@ -33,8 +33,8 @@ public class Bubble {
     public Bubble() {
         Random rand = new Random();
         touched = false;
-        value = (rand.nextInt()%RANGE)/* - (RANGE/2)*/;
-        velocity = new Vector2(rand.nextInt()%50,rand.nextInt()%20);
+        value = rand.nextInt(RANGE);
+        velocity = new Vector2(rand.nextInt(50),rand.nextInt(20));
         if (value <= 49) {
             texture = new Texture("blue.png");
             position = new Vector2(BLUESTARTX,ALLSTARTY);
@@ -44,7 +44,6 @@ public class Bubble {
         }
         bubbleScale = rand.nextInt(5)*texture.getWidth();
         bubbleSprite=new Sprite(texture);
-        //bubbleSprite.setSize(bubbleScale,bubbleScale);
         bound = new Circle(position.x + (bubbleScale/2),position.y+bubbleScale/2,bubbleScale/2);
     }
 
