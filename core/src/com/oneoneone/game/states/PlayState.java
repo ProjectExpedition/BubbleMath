@@ -52,11 +52,14 @@ public class PlayState extends State{
     public void update(float dt) {
         handleInput();
         dtsum = dtsum + dt;
-        if (dtsum > 1) {
+        if (dtsum > 2) {
             bubbles.add(new Bubble());
             dtsum = 0;
         }
         for (Bubble bub: bubbles){
+            for (int i=0;i>bubbles.size; i++) {
+                bub.collides(bubbles.get(i).getBound());
+            }
             bub.update(dt);
         }
     }
