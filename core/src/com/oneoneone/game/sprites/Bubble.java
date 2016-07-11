@@ -43,9 +43,9 @@ public class Bubble {
     public Bubble() {
         Random rand = new Random();
         touched = false;
-        //value = rand.nextInt()%RANGE; //value printed to screen
+        value = rand.nextBoolean();
         velocity = new Vector2(rand.nextInt(200),rand.nextInt(200));
-        if (value == rand.nextBoolean()) {
+        if (value) {
             texture = new Texture("blue.png");
             position = new Vector2(BLUESTARTX,BubbleMath.HEIGHT);
         } else {
@@ -70,6 +70,7 @@ public class Bubble {
         if (sumscaledt<=1){
             sumscaledt = sumscaledt + dt/(float)2; //collect dt
             bubbleScale = Math.round(maxWidth*sumscaledt); //increase bubble scale
+            bound.setRadius(bubbleScale/2);
         }else {
             position.add(velocity.x, velocity.y);
         }
@@ -100,10 +101,7 @@ public class Bubble {
         return position;
     }
     /* grab_bubble() is called on touch and directs bubbles within 50 units
-     * towards the touch location. This is not working perfectly as yet.
-     * Current issues (11/07/2016):
-     * Screen size issues.
-     * True Touch location offset from mouse click (on David's)
+     * towards the touch location.
      */
     public void grab_bubble(int pointer){
         //the following retrieve the x and y coordinates of the current touch.
@@ -126,6 +124,8 @@ public class Bubble {
         if (touch_magnitude_difference <  bubbleScale/2){
             position.x = x_touch_location-(bubbleScale/2);//-x_touch_difference; //set bubble to position of touch
             position.y = y_touch_location-(bubbleScale/2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
+            velocity.x = 0;
+            velocity.y = 0;
             velocity.x = (x_touch_location-previous_x_touch)/dt; //reset velocity
             velocity.y = (y_touch_location-previous_y_touch)/dt;
             if (velocity.x >= 5/dt){
@@ -147,11 +147,8 @@ public class Bubble {
         return bound;
     }
 
-    public void collides(Circle C){
-        if (bound.overlaps(C)) {
-            velocity.y = -velocity.y;
-            velocity.x = -velocity.x;
-        }
+    public void postCollisionVelocity(Vector2 newV){
+            velocity.set(newV);
     }
 
     public boolean getValue() {
@@ -168,6 +165,10 @@ public class Bubble {
 
     public int getBubbleScale(){
         return bubbleScale;
+    }
+
+    public Vector2 getVelocity(){
+        return velocity;
     }
 }
 

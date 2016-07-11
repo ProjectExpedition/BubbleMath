@@ -3,6 +3,8 @@ package com.oneoneone.game.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -66,11 +68,63 @@ public class PlayState extends State {
             bubbles.add(new Bubble()); //spawns bubble
             dtsum = 0; //resets sum poll time
         }
-        for (Bubble bub : bubbles) {//attempt at brute force collision detection TODO Collision Detection
-            for (int i = 0; i > bubbles.size; i++) {
-                bub.collides(bubbles.get(i).getBound());//inserts circle bound of all bubbles into current bubble
+        /** This control loop detects collisions and calculates the new velocity vector
+         *  based on the size of the colliding bubbles. It was hard to write.
+         **/
+        for (int i=0; i<bubbles.size; i++) {//attempt at brute force collision detection TODO Collision Detection
+            Circle currentBound=bubbles.get(i).getBound();
+            for (int k = 0; k < bubbles.size; k++) {
+                if(i!=k) {
+                    Circle compareBound=bubbles.get(k).getBound();
+                    if(currentBound.overlaps(compareBound)){
+                        Vector2 normal=new Vector2();
+                        normal.set(bubbles.get(i).getPosition());
+                        normal.sub(bubbles.get(k).getPosition());
+                        Vector2 unitNormal=new Vector2();
+                        unitNormal.set(normal);
+                        unitNormal.nor();
+                        Vector2 unitTangent=new Vector2();
+                        unitTangent.set(-unitNormal.y,unitNormal.x);
+                        Vector2 iVelocity=new Vector2();
+                        iVelocity.set(bubbles.get(i).getVelocity());
+                        Vector2 kVelocity=new Vector2();
+                        kVelocity.set(bubbles.get(k).getVelocity());
+                        Vector2 iVelocity_projection_normal=new Vector2();
+                        iVelocity_projection_normal.set(unitNormal);
+                        iVelocity_projection_normal.dot(iVelocity);
+                        Vector2 kVelocity_projection_normal=new Vector2();
+                        kVelocity_projection_normal.set(unitNormal);
+                        kVelocity_projection_normal.dot(kVelocity);
+                        Vector2 iVelocity_projection_tangent=new Vector2();
+                        iVelocity_projection_tangent.set(unitTangent);
+                        iVelocity_projection_tangent.dot(iVelocity);
+                        Vector2 kVelocity_projection_tangent=new Vector2();
+                        kVelocity_projection_tangent.set(unitTangent);
+                        kVelocity_projection_tangent.dot(kVelocity);
+                        float iMass=bubbles.get(i).getBubbleScale();
+                        float kMass=bubbles.get(k).getBubbleScale();
+                        Vector2 newiVelocity=new Vector2();
+                        newiVelocity.set(iVelocity_projection_normal);
+                        newiVelocity.scl(iMass-kMass);
+                        newiVelocity.add(kVelocity_projection_normal.scl(2*kMass));
+                        newiVelocity.scl(1/(iMass+kMass));
+                        Vector2 newkVelocity=new Vector2();
+                        newkVelocity.set(kVelocity_projection_normal);
+                        newkVelocity.scl(kMass-iMass);
+                        newkVelocity.add(iVelocity_projection_normal.scl(2*iMass));
+                        newkVelocity.scl(1/(iMass+kMass));
+                        newiVelocity.dot(unitNormal);
+                        newkVelocity.dot(unitNormal);
+                        newiVelocity.add(iVelocity_projection_tangent);
+                        newkVelocity.add(kVelocity_projection_tangent);
+                        bubbles.get(i).postCollisionVelocity(newiVelocity);
+                        bubbles.get(k).postCollisionVelocity(newkVelocity);
+//                        bubbles.removeIndex(i);
+//                        bubbles.removeIndex(k);
+                    }
+                }
             }
-            bub.update(dt); //calculates position changes to bubble
+            bubbles.get(i).update(dt); //calculates position changes to bubble
         }
     }
 
