@@ -78,8 +78,8 @@ public class Bubble {
 
         //the following creates a pair of variables to check the difference between
         //the bubble position and the touch location.
-        float x_touch_difference = Math.abs(position.x-x_touch_location);
-        float y_touch_difference = Math.abs(position.y-y_touch_location);
+        float x_touch_difference = Math.abs((position.x+texture.getWidth()/2)-x_touch_location);
+        float y_touch_difference = Math.abs((position.y+texture.getWidth()/2)-y_touch_location);
 
 
         //Check to see if the bubbles are in range of the touch and if so
