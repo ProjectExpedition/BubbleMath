@@ -14,6 +14,10 @@ import com.oneoneone.game.sprites.Bubble;
  * Created by David on 9/07/2016.
  */
 public class PlayState extends State{
+    public static final int SCREEN_WIDTH = Gdx.graphics.getWidth();
+    public static final int SCREEN_HEIGHT = Gdx.graphics.getHeight();
+    public static final float SCALEX = (float)BubbleMath.WIDTH/SCREEN_WIDTH;
+    public static final float SCALEY = (float)BubbleMath.HEIGHT/SCREEN_HEIGHT;
     private static final int MAX_BUBBLES = 10;
     private Bubble bubble;
     private Texture bg;

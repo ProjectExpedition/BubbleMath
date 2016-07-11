@@ -10,6 +10,7 @@ import com.oneoneone.game.states.GameStateManager;
 import com.oneoneone.game.states.MenuState;
 
 public class BubbleMath extends ApplicationAdapter {
+
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
 	public static final java.lang.String TITLE = "Bubble Math";
