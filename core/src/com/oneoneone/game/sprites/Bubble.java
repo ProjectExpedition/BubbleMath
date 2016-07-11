@@ -148,7 +148,9 @@ public class Bubble {
     }
 
     public void postCollisionVelocity(Vector2 newV){
+//            newV.scl(10);
             velocity.set(newV);
+
     }
 
     public boolean getValue() {

@@ -65,7 +65,10 @@ public class PlayState extends State {
         handleInput(); //calls first to see if screen has been touched before updating
         dtsum = dtsum + dt; //sums poll time
         if (dtsum > 1.5) { //if a certain number of poll times have passed spawn a bubble
-            if (bubbles.size < 20) {
+            if (bubbles.get(0).getBound().radius==0&&bubbles.get(0).getBound().x==0&&
+                    bubbles.get(0).getBound().y==0){
+                bubbles.set(0,new Bubble());
+            }else if (bubbles.size < 20) {
                 bubbles.add(new Bubble()); //spawns bubble
             }
             dtsum = 0;//resets sum poll time
@@ -84,7 +87,7 @@ public class PlayState extends State {
                         normal.sub(bubbles.get(k).getPosition());
                         Vector2 unitNormal=new Vector2();
                         unitNormal.set(normal);
-                        unitNormal.nor();
+//                        unitNormal.nor();
                         Vector2 unitTangent=new Vector2();
                         unitTangent.set(-unitNormal.y,unitNormal.x);
                         Vector2 iVelocity=new Vector2();
@@ -103,8 +106,8 @@ public class PlayState extends State {
                         Vector2 kVelocity_projection_tangent=new Vector2();
                         kVelocity_projection_tangent.set(unitTangent);
                         kVelocity_projection_tangent.dot(kVelocity);
-                        float iMass=bubbles.get(i).getBubbleScale();
-                        float kMass=bubbles.get(k).getBubbleScale();
+                        float iMass=(bubbles.get(i).getBubbleScale())/100f;
+                        float kMass=(bubbles.get(k).getBubbleScale())/100f;
                         Vector2 newiVelocity=new Vector2();
                         newiVelocity.set(iVelocity_projection_normal);
                         newiVelocity.scl(iMass-kMass);
@@ -117,6 +120,8 @@ public class PlayState extends State {
                         newkVelocity.scl(1/(iMass+kMass));
                         newiVelocity.dot(unitNormal);
                         newkVelocity.dot(unitNormal);
+//                        iVelocity_projection_tangent.dot(unitTangent);
+//                        kVelocity_projection_tangent.dot(unitTangent);
                         newiVelocity.add(iVelocity_projection_tangent);
                         newkVelocity.add(kVelocity_projection_tangent);
                         bubbles.get(i).postCollisionVelocity(newiVelocity);
