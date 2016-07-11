@@ -71,10 +71,10 @@ public class Bubble {
      * Screen size issues.
      * True Touch location offset from mouse click (on David's)
      */
-    public void grab_bubble(){
+    public void grab_bubble(int pointer){
         //the following retrieve the x and y coordinates of the current touch.
-        float x_touch_location = PlayState.SCALEX*(Gdx.input.getX());
-        float y_touch_location = PlayState.SCALEY*(PlayState.SCREEN_HEIGHT-Gdx.input.getY());
+        float x_touch_location = PlayState.SCALEX*(Gdx.input.getX(pointer));
+        float y_touch_location = PlayState.SCALEY*(PlayState.SCREEN_HEIGHT-Gdx.input.getY(pointer));
 
         //the following creates a pair of variables to check the difference between
         //the bubble position and the touch location.
@@ -84,8 +84,8 @@ public class Bubble {
 
         //Check to see if the bubbles are in range of the touch and if so
         //direct them to the touch location.
-        if (x_touch_difference < 100){
-            if(y_touch_difference < 100) {
+        if (x_touch_difference <  texture.getWidth()/2){
+            if(y_touch_difference <  texture.getWidth()/2) {
                 position.x = x_touch_location-texture.getWidth()/2; //set bubble to position of touch
                 position.y = y_touch_location-texture.getWidth()/2; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
                 velocity.x = 0; //reset velocity
