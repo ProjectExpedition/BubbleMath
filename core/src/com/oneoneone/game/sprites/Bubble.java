@@ -41,7 +41,7 @@ public class Bubble {
         Random rand = new Random();
         touched = false;
         value = rand.nextBoolean();
-        velocity = new Vector2(rand.nextInt(100),rand.nextInt(100));
+        velocity = new Vector2(rand.nextInt(200),rand.nextInt(200));
         if (value == true) {
             texture = new Texture("blue.png");
             position = new Vector2(BLUESTARTX,BubbleMath.HEIGHT);
@@ -49,7 +49,8 @@ public class Bubble {
             texture = new Texture("red.png");
             position = new Vector2(REDSTARTX,0);
         }
-        maxWidth = rand.nextInt(5)*texture.getWidth();
+        maxWidth = (int)Math.round(texture.getWidth() * ((1+rand.nextDouble())*rand.nextInt(3)));//When using larger bubble sprite use height*rand.nextDouble()
+        //maxWidth = rand.nextInt(5)*texture.getWidth();
         bubbleSprite = new Sprite(texture);
         bound = new Circle(position.x + (bubbleScale/2),position.y+bubbleScale/2,bubbleScale/2);
         //position.y = -bubbleScale; //so the bubble does not pop onto screen (turned off)
