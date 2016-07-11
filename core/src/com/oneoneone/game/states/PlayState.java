@@ -37,7 +37,7 @@ public class PlayState extends State {
 //        blueSpawner = new Texture("blue_spawner.png");
 //        redSpawner2 = new Texture("red_spawner_2.png");
 //        blueSpawner2 = new Texture("blue_spawner_2.png");
-        bg = new Texture("play_background.png");
+        bg = new Texture("bg.png");
         bubbles = new Array<Bubble>();
         bubbles.add(new Bubble()); //creates first bubble
     }
@@ -65,8 +65,10 @@ public class PlayState extends State {
         handleInput(); //calls first to see if screen has been touched before updating
         dtsum = dtsum + dt; //sums poll time
         if (dtsum > 1.5) { //if a certain number of poll times have passed spawn a bubble
-            bubbles.add(new Bubble()); //spawns bubble
-            dtsum = 0; //resets sum poll time
+            if (bubbles.size < 20) {
+                bubbles.add(new Bubble()); //spawns bubble
+            }
+            dtsum = 0;//resets sum poll time
         }
         /** This control loop detects collisions and calculates the new velocity vector
          *  based on the size of the colliding bubbles. It was hard to write.

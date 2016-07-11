@@ -52,7 +52,7 @@ public class Bubble {
             texture = new Texture("red.png");
             position = new Vector2(REDSTARTX,0);
         }
-        maxWidth = (int)Math.round(texture.getWidth() * ((1+rand.nextDouble())*rand.nextInt(3)));//When using larger bubble sprite use height*rand.nextDouble()
+        maxWidth = (int)Math.round(texture.getWidth() * (rand.nextFloat() * (1 - 0.4) + 0.4));//When using larger bubble sprite use height*rand.nextDouble()
         //maxWidth = rand.nextInt(5)*texture.getWidth();
         bubbleSprite = new Sprite(texture);
         bound = new Circle(position.x + (bubbleScale/2),position.y+bubbleScale/2,bubbleScale/2);
@@ -68,7 +68,7 @@ public class Bubble {
         }
         velocity.scl(dt);
         if (sumscaledt<=1){
-            sumscaledt = sumscaledt + dt/(float)2; //collect dt
+            sumscaledt = sumscaledt + dt; //collect dt
             bubbleScale = Math.round(maxWidth*sumscaledt); //increase bubble scale
             bound.setRadius(bubbleScale/2);
         }else {
@@ -76,7 +76,7 @@ public class Bubble {
         }
         cornerCollision();
         velocity.scl(1/dt);
-        bound.setPosition(position);
+        bound.set(position,bubbleScale/2);
 
     }
     public void cornerCollision(){
