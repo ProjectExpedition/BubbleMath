@@ -17,8 +17,8 @@ public class MenuState extends State {
     private int btnRadius;
     public MenuState(GameStateManager gsm) {
         super(gsm);
-        background = new Texture("start_menu_background.png");
-        startBtn = new Texture("red.png");
+        background = new Texture("play_background.png");
+        startBtn = new Texture("blue.png");
         btnRadius = 4*startBtn.getWidth();
         startBtnPosition = new Vector2((3*BubbleMath.WIDTH/4)-(startBtn.getWidth()/2),(BubbleMath.HEIGHT/2)-(btnRadius/2));
     }
