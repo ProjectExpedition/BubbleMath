@@ -17,8 +17,8 @@ import java.util.Random;
  */
 public class Bubble {
     private static final int RANGE = 100;       //number of possible numbers
-    private static final int BLUESTARTX = 960;  //starting x coordinate for blue
-    private static final int REDSTARTX = 320;   //starting x coordinate for red
+    private static final int BLUESTARTX = 1280;  //starting x coordinate for blue
+    private static final int REDSTARTX = 0;   //starting x coordinate for red
     //private static final int ALLSTARTY = -200;   //starting y coordinate for red and blue
     private static final int BUOYANCY = 1;      //velocity added each update to give effect of buoyancy
     private Texture texture;    //bubble texture (red or blue) stored here
@@ -28,6 +28,8 @@ public class Bubble {
     private Vector2 position;   //position of bubble
     private boolean value;          //number represented on screen for bubble, -ve = red, +ve = blue
     private Circle bound;       //collision detection representation of bubble
+    private float sumscaledt=0;
+    private int maxWidth;
     private boolean touched;
 
     /** Bubble() creates an instance of a bubble sprite for the array.
@@ -47,10 +49,10 @@ public class Bubble {
             texture = new Texture("red.png");
             position = new Vector2(REDSTARTX,0);
         }
-        bubbleScale = rand.nextInt(5)*texture.getWidth();
-        bubbleSprite=new Sprite(texture);
+        maxWidth = rand.nextInt(5)*texture.getWidth();
+        bubbleSprite = new Sprite(texture);
         bound = new Circle(position.x + (bubbleScale/2),position.y+bubbleScale/2,bubbleScale/2);
-        position.y = -bubbleScale; //so the bubble does not pop onto screen (turned off)
+        //position.y = -bubbleScale; //so the bubble does not pop onto screen (turned off)
     }
 
     public void update(float dt){ //dt = amount of time passed since last update
@@ -62,6 +64,11 @@ public class Bubble {
         cornerCollision();
         velocity.scl(1/dt);
         bound.setPosition(position);
+        if (sumscaledt<=1){
+            sumscaledt = sumscaledt + dt/(float)2;
+            bubbleScale = Math.round(maxWidth*sumscaledt);
+        }
+
     }
     public void cornerCollision(){
         float offset = bubbleScale;
