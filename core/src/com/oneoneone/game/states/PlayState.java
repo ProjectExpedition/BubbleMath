@@ -39,14 +39,11 @@ public class PlayState extends State{
 
     @Override
     protected void handleInput() {
-        if(Gdx.input.isTouched(0)) {
-            for (Bubble bub: bubbles){
-                bub.grab_bubble(0);
-            }
-        }
-        if(Gdx.input.isTouched(1)){
-            for (Bubble bub: bubbles){
-                bub.grab_bubble(1);
+        for(int i = 0; i<2; i++) {
+            if (Gdx.input.isTouched(i)) {
+                for (Bubble bub : bubbles) {
+                    bub.grab_bubble(i);
+                }
             }
         }
     }
