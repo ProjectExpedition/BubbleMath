@@ -78,19 +78,19 @@ public class Bubble {
 
         //the following creates a pair of variables to check the difference between
         //the bubble position and the touch location.
-        float x_touch_difference = Math.abs((position.x+texture.getWidth()/2)-x_touch_location);
-        float y_touch_difference = Math.abs((position.y+texture.getWidth()/2)-y_touch_location);
+        float x_touch_difference = (position.x+texture.getWidth()/2)-x_touch_location;
+        float y_touch_difference = (position.y+texture.getWidth()/2)-y_touch_location;
 
+        //the magnitude
+        double touch_magnitude_difference = Math.sqrt(x_touch_difference*x_touch_difference+y_touch_difference*y_touch_difference);
 
         //Check to see if the bubbles are in range of the touch and if so
         //direct them to the touch location.
-        if (x_touch_difference <  texture.getWidth()/2){
-            if(y_touch_difference <  texture.getWidth()/2) {
-                position.x = x_touch_location-texture.getWidth()/2; //set bubble to position of touch
-                position.y = y_touch_location-texture.getWidth()/2; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
+        if (touch_magnitude_difference <  texture.getWidth()/2){
+                position.x = x_touch_location-(texture.getWidth()/2);//-x_touch_difference; //set bubble to position of touch
+                position.y = y_touch_location-(texture.getWidth()/2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
                 velocity.x = 0; //reset velocity
                 velocity.y = 0;
-            }
         }
     }
     public Circle getBound() {

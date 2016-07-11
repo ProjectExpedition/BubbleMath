@@ -17,7 +17,7 @@ public class PlayState extends State{
     public static final int SCREEN_WIDTH = Gdx.graphics.getWidth();
     public static final int SCREEN_HEIGHT = Gdx.graphics.getHeight();
     public static final float SCALEX = (float)BubbleMath.WIDTH/SCREEN_WIDTH;
-    public static final float SCALEY = (float)BubbleMath.HEIGHT/SCREEN_HEIGHT;
+    public static final float SCALEY = (float)BubbleMath.HEIGHT/SCREEN_HEIGHT; //(float) used so int division isnt used
     private static final int MAX_BUBBLES = 10;
     private Bubble bubble;
     private Texture bg;
