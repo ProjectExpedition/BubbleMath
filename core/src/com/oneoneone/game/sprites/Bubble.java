@@ -63,14 +63,15 @@ public class Bubble {
             velocity.add(0, BUOYANCY);
         }
         velocity.scl(dt);
-        position.add(velocity.x, velocity.y);
-        cornerCollision();
-        velocity.scl(1/dt);
-        bound.setPosition(position);
         if (sumscaledt<=1){
             sumscaledt = sumscaledt + dt/(float)2; //collect dt
             bubbleScale = Math.round(maxWidth*sumscaledt); //increase bubble scale
+        }else {
+            position.add(velocity.x, velocity.y);
         }
+        cornerCollision();
+        velocity.scl(1/dt);
+        bound.setPosition(position);
 
     }
     public void cornerCollision(){
