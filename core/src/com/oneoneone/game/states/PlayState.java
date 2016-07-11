@@ -21,6 +21,8 @@ public class PlayState extends State {
     private Texture bg;
     private Texture redSpawner;
     private Texture blueSpawner;
+    private Texture redSpawner2;
+    private Texture blueSpawner2;
     private float dtsum = 0; //collects amount of time that has passed in game
     private Array<Bubble> bubbles; //Array Container of all bubbles
 
@@ -29,8 +31,10 @@ public class PlayState extends State {
      */
     public PlayState(GameStateManager gsm) {
         super(gsm); //super = active state class
-        redSpawner = new Texture("red_spawner.png");
-        blueSpawner = new Texture("blue_spawner.png");
+//        redSpawner = new Texture("red_spawner.png");
+//        blueSpawner = new Texture("blue_spawner.png");
+//        redSpawner2 = new Texture("red_spawner_2.png");
+//        blueSpawner2 = new Texture("blue_spawner_2.png");
         bg = new Texture("play_background.png");
         bubbles = new Array<Bubble>();
         bubbles.add(new Bubble()); //creates first bubble
@@ -58,7 +62,7 @@ public class PlayState extends State {
     public void update(float dt) {
         handleInput(); //calls first to see if screen has been touched before updating
         dtsum = dtsum + dt; //sums poll time
-        if (dtsum > 2) { //if a certain number of poll times have passed spawn a bubble
+        if (dtsum > 1.5) { //if a certain number of poll times have passed spawn a bubble
             bubbles.add(new Bubble()); //spawns bubble
             dtsum = 0; //resets sum poll time
         }
@@ -77,12 +81,14 @@ public class PlayState extends State {
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(bg, 0, 0);
+        //sb.draw(redSpawner2, BubbleMath.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
+        //sb.draw(blueSpawner2, 3 * BubbleMath.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         for (Bubble bub : bubbles) {
             sb.draw(bub.getBubbleSprite(), bub.getPosition().x, bub.getPosition().y,
                     bub.getBubbleScale(), bub.getBubbleScale());
         }
-        sb.draw(redSpawner, BubbleMath.WIDTH / 4 - (blueSpawner.getWidth() / 4), 0);
-        sb.draw(blueSpawner, 3 * BubbleMath.WIDTH / 4 - (blueSpawner.getWidth() / 4), 0);
+        //sb.draw(redSpawner, BubbleMath.WIDTH / 4 - (blueSpawner.getWidth() / 4), 0);
+        //sb.draw(blueSpawner, 3 * BubbleMath.WIDTH / 4 - (blueSpawner.getWidth() / 4), 0);
         sb.end();
     }
 
