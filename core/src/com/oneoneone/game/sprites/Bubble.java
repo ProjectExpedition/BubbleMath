@@ -26,19 +26,24 @@ public class Bubble {
     private Sprite bubbleSprite;//sprite container for bubbles
     private Vector2 velocity;   //speed at which bubble moves
     private Vector2 position;   //position of bubble
-    private int value;          //number represented on screen for bubble, -ve = red, +ve = blue
+    private boolean value;          //number represented on screen for bubble, -ve = red, +ve = blue
     private Circle bound;       //collision detection representation of bubble
     private boolean touched;
 
+    /** Bubble() creates an instance of a bubble sprite for the array.
+     *  The colour is selected using a random Boolean value; true creates a
+     *  blue bubble, false creates red.
+     *  A random scale factor is then created to be attached to the bubble.
+     */
     public Bubble() {
         Random rand = new Random();
         touched = false;
-        value = rand.nextInt(RANGE);
+        value = rand.nextBoolean();
         velocity = new Vector2(rand.nextInt(50),rand.nextInt(20));
-        if (value <= 49) {
+        if (value == true) {
             texture = new Texture("blue.png");
             position = new Vector2(BLUESTARTX,ALLSTARTY);
-        } else if(value > 49){
+        } else {
             texture = new Texture("red.png");
             position = new Vector2(REDSTARTX,ALLSTARTY);
         }
@@ -118,7 +123,7 @@ public class Bubble {
         }
     }
 
-    public int getValue() {
+    public boolean getValue() {
         return value;
     }
 
