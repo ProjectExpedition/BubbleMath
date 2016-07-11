@@ -28,8 +28,11 @@ public class Bubble {
     private Vector2 position;   //position of bubble
     private boolean value;          //number represented on screen for bubble, -ve = red, +ve = blue
     private Circle bound;       //collision detection representation of bubble
-    private float sumscaledt=0;
+    private float sumscaledt = 0;
     private int maxWidth;
+    private float dt; //test for velocity drag
+    float x_touch_location;
+    float y_touch_location;
     private boolean touched;
 
     /** Bubble() creates an instance of a bubble sprite for the array.
@@ -40,9 +43,9 @@ public class Bubble {
     public Bubble() {
         Random rand = new Random();
         touched = false;
-        value = rand.nextBoolean();
+        //value = rand.nextInt()%RANGE; //value printed to screen
         velocity = new Vector2(rand.nextInt(200),rand.nextInt(200));
-        if (value == true) {
+        if (value == rand.nextBoolean()) {
             texture = new Texture("blue.png");
             position = new Vector2(BLUESTARTX,BubbleMath.HEIGHT);
         } else {
@@ -57,6 +60,7 @@ public class Bubble {
     }
 
     public void update(float dt){ //dt = amount of time passed since last update
+        this.dt = dt;
         if(value) {
             velocity.add(0, -BUOYANCY);}
         else{
@@ -103,8 +107,10 @@ public class Bubble {
      */
     public void grab_bubble(int pointer){
         //the following retrieve the x and y coordinates of the current touch.
-        float x_touch_location = PlayState.SCALEX*(Gdx.input.getX(pointer));
-        float y_touch_location = PlayState.SCALEY*(PlayState.SCREEN_HEIGHT-Gdx.input.getY(pointer));
+        float previous_x_touch = x_touch_location;
+        float previous_y_touch = y_touch_location;
+        x_touch_location = PlayState.SCALEX*(Gdx.input.getX(pointer));
+        y_touch_location = PlayState.SCALEY*(PlayState.SCREEN_HEIGHT-Gdx.input.getY(pointer));
 
         //the following creates a pair of variables to check the difference between
         //the bubble position and the touch location.
@@ -120,8 +126,14 @@ public class Bubble {
         if (touch_magnitude_difference <  bubbleScale/2){
             position.x = x_touch_location-(bubbleScale/2);//-x_touch_difference; //set bubble to position of touch
             position.y = y_touch_location-(bubbleScale/2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
-            velocity.x = 0; //reset velocity
-            velocity.y = 0;
+            velocity.x = (x_touch_location-previous_x_touch)/dt; //reset velocity
+            velocity.y = (y_touch_location-previous_y_touch)/dt;
+            if (velocity.x >= 10/dt){
+                velocity.x = 10/dt;
+            }
+            if (velocity.y >= 10/dt){
+                velocity.y = 10/dt;
+            }
             touched = true; //set touch to true TODO create "selected state" for bubble
         }
     }
