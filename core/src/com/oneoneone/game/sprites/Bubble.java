@@ -128,17 +128,17 @@ public class Bubble {
             velocity.y = 0;
             velocity.x = (x_touch_location-previous_x_touch)/dt; //reset velocity
             velocity.y = (y_touch_location-previous_y_touch)/dt;
-            if (velocity.x >= 5/dt){
-                velocity.x = 5f/dt;
+            if (velocity.x >= 15/dt){
+                velocity.x = 15f/dt;
             }
-            if (velocity.y >= 5/dt){
-                velocity.y = 5f/dt;
+            if (velocity.y >= 15/dt){
+                velocity.y = 15f/dt;
             }
-            if (velocity.x <= -5/dt){
-                velocity.x = -5f/dt;
+            if (velocity.x <= -15/dt){
+                velocity.x = -15f/dt;
             }
-            if (velocity.y <= -5/dt){
-                velocity.y = -5f/dt;
+            if (velocity.y <= -15/dt){
+                velocity.y = -15f/dt;
             }
             touched = true; //set touch to true TODO create "selected state" for bubble
         }
