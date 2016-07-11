@@ -57,15 +57,15 @@ public class Bubble {
         if(position.y < 0){
             position.y = 0;
             velocity.y = -velocity.y;}
-        if(position.y > (BubbleMath.HEIGHT - texture.getWidth())){
+        if(position.y > (BubbleMath.HEIGHT - 100)){
             velocity.y = -velocity.y;
-            position.y = BubbleMath.HEIGHT - texture.getWidth();}//-100 because just HEIGHT moves bubble off screen
+            position.y = BubbleMath.HEIGHT - 100;}//-100 because just HEIGHT moves bubble off screen
         if(position.x < 0){
             position.x = 0;
             velocity.x = -velocity.x;
         }
-        if(position.x > (BubbleMath.WIDTH - texture.getWidth())){
-            position.x = BubbleMath.WIDTH - texture.getWidth();
+        if(position.x > (BubbleMath.WIDTH - 100)){
+            position.x = BubbleMath.WIDTH - 100;
             velocity.x = -velocity.x;
         }
     }
@@ -90,7 +90,7 @@ public class Bubble {
         float y_touch_difference = (position.y+texture.getWidth()/2)-y_touch_location;
 
         //the magnitude
-        double touch_magnitude_difference = Math.sqrt(x_touch_difference*x_touch_difference+y_touch_difference*y_touch_difference);
+        double touch_magnitude_difference = Math.hypot(x_touch_difference,y_touch_difference);
 
         //Check to see if the bubbles are in range of the touch and if so
         //direct them to the touch location.
