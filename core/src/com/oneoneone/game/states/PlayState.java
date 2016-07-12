@@ -94,6 +94,7 @@ public class PlayState extends State {
                         normal.set(bubbles.get(i).getPosition());
                         normal.sub(bubbles.get(k).getPosition());
                         unitNormal.set(normal);
+                        //unitNormal.nor();
                         unitTangent.set(-unitNormal.y,unitNormal.x);
                         iVelocity.set(bubbles.get(i).getVelocity());
                         kVelocity.set(bubbles.get(k).getVelocity());
