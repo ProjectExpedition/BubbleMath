@@ -77,7 +77,10 @@ public class Bubble {
         cornerCollision();
         velocity.scl(1/dt);
         bound.set(position,bubbleScale/2);
+    }
 
+    public boolean collision(Circle C){
+        return bound.overlaps(C);
     }
     public void cornerCollision(){
         float offset = bubbleScale;

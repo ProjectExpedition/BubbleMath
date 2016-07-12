@@ -76,39 +76,37 @@ public class PlayState extends State {
         /** This control loop detects collisions and calculates the new velocity vector
          *  based on the size of the colliding bubbles. It was hard to write.
          **/
-        for (int i=0; i<bubbles.size; i++) {//attempt at brute force collision detection TODO Collision Detection
-            Circle currentBound=bubbles.get(i).getBound();
+        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
+        Vector2 unitNormal=new Vector2();
+        Vector2 unitTangent=new Vector2();
+        Vector2 iVelocity=new Vector2();
+        Vector2 kVelocity=new Vector2();
+        Vector2 iVelocity_projection_normal=new Vector2();
+        Vector2 kVelocity_projection_normal=new Vector2();
+        Vector2 iVelocity_projection_tangent=new Vector2();
+        Vector2 kVelocity_projection_tangent=new Vector2();
+        Vector2 newiVelocity=new Vector2();
+        float iMass,kMass;
+        for (int i=0; i<bubbles.size; i++) {
             for (int k = 0; k < bubbles.size; k++) {
                 if(i!=k) {
-                    Circle compareBound=bubbles.get(k).getBound();
-                    if(currentBound.overlaps(compareBound)){
-                        Vector2 normal=new Vector2();
+                    if(bubbles.get(i).collision(bubbles.get(k).getBound())){
                         normal.set(bubbles.get(i).getPosition());
                         normal.sub(bubbles.get(k).getPosition());
-                        Vector2 unitNormal=new Vector2();
                         unitNormal.set(normal);
-//                        unitNormal.nor();
-                        Vector2 unitTangent=new Vector2();
                         unitTangent.set(-unitNormal.y,unitNormal.x);
-                        Vector2 iVelocity=new Vector2();
                         iVelocity.set(bubbles.get(i).getVelocity());
-                        Vector2 kVelocity=new Vector2();
                         kVelocity.set(bubbles.get(k).getVelocity());
-                        Vector2 iVelocity_projection_normal=new Vector2();
                         iVelocity_projection_normal.set(unitNormal);
                         iVelocity_projection_normal.dot(iVelocity);
-                        Vector2 kVelocity_projection_normal=new Vector2();
                         kVelocity_projection_normal.set(unitNormal);
                         kVelocity_projection_normal.dot(kVelocity);
-                        Vector2 iVelocity_projection_tangent=new Vector2();
                         iVelocity_projection_tangent.set(unitTangent);
                         iVelocity_projection_tangent.dot(iVelocity);
-                        Vector2 kVelocity_projection_tangent=new Vector2();
                         kVelocity_projection_tangent.set(unitTangent);
                         kVelocity_projection_tangent.dot(kVelocity);
-                        float iMass=(bubbles.get(i).getBubbleScale())/100f;
-                        float kMass=(bubbles.get(k).getBubbleScale())/100f;
-                        Vector2 newiVelocity=new Vector2();
+                        iMass = (bubbles.get(i).getBubbleScale())/100f;
+                        kMass = (bubbles.get(k).getBubbleScale())/100f;
                         newiVelocity.set(iVelocity_projection_normal);
                         newiVelocity.scl(iMass-kMass);
                         newiVelocity.add(kVelocity_projection_normal.scl(2*kMass));
