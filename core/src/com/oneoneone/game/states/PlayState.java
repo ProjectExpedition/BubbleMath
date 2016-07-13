@@ -26,7 +26,8 @@ public class PlayState extends State {
     private Texture redSpawner2;
     private Texture blueSpawner2;
     private float dtsum = 0; //collects amount of time that has passed in game
-    private Array<Bubble> bubbles; //Array Container of all bubbles
+    private Array<Bubble> redArray; //Array Container of all bubbles
+    private Array<Bubble> blueArray;
 
     /* PlayState(GameStateManager gsm) is called after Menu State
      * Allocates memory and calls constructors for all data members.
@@ -38,8 +39,10 @@ public class PlayState extends State {
 //        redSpawner2 = new Texture("red_spawner_2.png");
 //        blueSpawner2 = new Texture("blue_spawner_2.png");
         bg = new Texture("bg.png");
-        bubbles = new Array<Bubble>();
-        bubbles.add(new Bubble()); //creates first bubble
+        redArray = new Array<Bubble>();
+        blueArray = new Array<Bubble>();
+        redArray.add(new Bubble(true)); //creates first bubble
+        blueArray.add(new Bubble(false));
     }
 
     /* handleInput() checks if the person has touched the screen
@@ -49,7 +52,10 @@ public class PlayState extends State {
     protected void handleInput() {
         for (int i = 0; i < 2; i++) {       //initializes to count maximum of two touch pointers
             if (Gdx.input.isTouched(i)) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
-                for (Bubble bub : bubbles) {
+                for (Bubble bub : redArray) {
+                    bub.grab_bubble(i);
+                }
+                for (Bubble bub : blueArray) {
                     bub.grab_bubble(i);
                 }
             }
@@ -65,11 +71,13 @@ public class PlayState extends State {
         handleInput(); //calls first to see if screen has been touched before updating
         dtsum = dtsum + dt; //sums poll time
         if (dtsum > 1.5) { //if a certain number of poll times have passed spawn a bubble
-            if (bubbles.get(0).getBound().radius==0&&bubbles.get(0).getBound().x==0&&
-                    bubbles.get(0).getBound().y==0){
-                bubbles.set(0,new Bubble());
-            }else if (bubbles.size < 20) {
-                bubbles.add(new Bubble()); //spawns bubble
+            if (redArray.get(0).getBound().radius==0&&redArray.get(0).getBound().x==0&&
+                    redArray.get(0).getBound().y==0){
+                redArray.set(0,new Bubble(true));
+                blueArray.set(0,new Bubble(false));
+            }else if (redArray.size < 10) {
+                blueArray.add(new Bubble(false)); //spawns bubble
+                redArray.add(new Bubble(true));
             }
             dtsum = 0;//resets sum poll time
         }
@@ -87,11 +95,16 @@ public class PlayState extends State {
         Vector2 kVelocity_projection_tangent=new Vector2();
         Vector2 newiVelocity=new Vector2();
         float iMass,kMass;
-        for (int i=0; i<bubbles.size; i++) {
-            for (int k = 0; k < bubbles.size; k++) {
-                if(i!=k) {
-                    if(bubbles.get(i).collision(bubbles.get(k).getBound())){
-                        normal.set(bubbles.get(i).getPosition());
+        int i = 0, k;
+        while (i < redArray.size) {
+            k=0;
+            redArray.get(i).update(dt);
+            blueArray.get(i).update(dt);
+            while (k < blueArray.size){
+                    if(redArray.get(i).getBound().overlaps((blueArray.get(k).getBound()))){
+                        redArray.removeIndex(i);
+                        blueArray.removeIndex(k);
+                        /*normal.set(bubbles.get(i).getPosition());
                         normal.sub(bubbles.get(k).getPosition());
                         unitNormal.set(normal);
                         //unitNormal.nor();
@@ -126,11 +139,12 @@ public class PlayState extends State {
                         bubbles.get(i).postCollisionVelocity(newiVelocity);
                         bubbles.get(k).postCollisionVelocity(newkVelocity);
 //                        bubbles.removeIndex(i);
-//                        bubbles.removeIndex(k);
+//                        bubbles.removeIndex(k);*/
                     }
-                }
+                k++;
             }
-            bubbles.get(i).update(dt); //calculates position changes to bubble
+            i++;
+             //calculates position changes to bubble
         }
     }
 
@@ -143,7 +157,11 @@ public class PlayState extends State {
         sb.draw(bg, 0, 0);
         //sb.draw(redSpawner2, BubbleMath.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         //sb.draw(blueSpawner2, 3 * BubbleMath.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
-        for (Bubble bub : bubbles) {
+        for (Bubble bub : redArray) {
+            sb.draw(bub.getBubbleSprite(), bub.getPosition().x, bub.getPosition().y,
+                    bub.getBubbleScale(), bub.getBubbleScale());
+        }
+        for (Bubble bub : blueArray) {
             sb.draw(bub.getBubbleSprite(), bub.getPosition().x, bub.getPosition().y,
                     bub.getBubbleScale(), bub.getBubbleScale());
         }

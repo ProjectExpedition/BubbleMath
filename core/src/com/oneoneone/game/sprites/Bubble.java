@@ -40,12 +40,12 @@ public class Bubble {
      *  blue bubble, false creates red.
      *  A random scale factor is then created to be attached to the bubble.
      */
-    public Bubble() {
+    public Bubble(boolean isRed) {
         Random rand = new Random();
         touched = false;
-        value = rand.nextBoolean();
+        value = isRed;
         velocity = new Vector2(rand.nextInt(200),rand.nextInt(200));
-        if (value) {
+        if (!isRed) {
             texture = new Texture("blue.png");
             position = new Vector2(BLUESTARTX,BubbleMath.HEIGHT);
         } else {
