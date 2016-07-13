@@ -71,11 +71,11 @@ public class PlayState extends State {
         handleInput(); //calls first to see if screen has been touched before updating
         dtsum = dtsum + dt; //sums poll time
         if (dtsum > 1.5) { //if a certain number of poll times have passed spawn a bubble
-            if (redArray.get(0).getBound().radius==0&&redArray.get(0).getBound().x==0&&
-                    redArray.get(0).getBound().y==0){
-                redArray.set(0,new Bubble(true));
-                blueArray.set(0,new Bubble(false));
-            }else if (redArray.size < 10) {
+            if (redArray.get(0).getBound().radius == 0 && redArray.get(0).getBound().x == 0 &&
+                    redArray.get(0).getBound().y == 0) {
+                redArray.set(0, new Bubble(true));
+                blueArray.set(0, new Bubble(false));
+            } else if (redArray.size < 10) {
                 blueArray.add(new Bubble(false)); //spawns bubble
                 redArray.add(new Bubble(true));
             }
@@ -85,34 +85,50 @@ public class PlayState extends State {
          *  based on the size of the colliding bubbles. It was hard to write.
          **/
         Vector2 normal = new Vector2(); //allocate memory once to improve eff.
-        Vector2 unitNormal=new Vector2();
-        Vector2 unitTangent=new Vector2();
-        Vector2 iVelocity=new Vector2();
-        Vector2 kVelocity=new Vector2();
-        Vector2 iVelocity_projection_normal=new Vector2();
-        Vector2 kVelocity_projection_normal=new Vector2();
-        Vector2 iVelocity_projection_tangent=new Vector2();
-        Vector2 kVelocity_projection_tangent=new Vector2();
-        Vector2 newiVelocity=new Vector2();
-        float iMass,kMass;
-        int i = 0, k;
-        while (i < redArray.size) {
-            k=0;
-            redArray.get(i).update(dt);
-            blueArray.get(i).update(dt);
-            while (k < blueArray.size){
-                    if(redArray.get(i).getBound().overlaps((blueArray.get(k).getBound()))){
-                        redArray.removeIndex(i);
+        Vector2 unitNormal = new Vector2();
+        Vector2 unitTangent = new Vector2();
+        Vector2 iVelocity = new Vector2();
+        Vector2 kVelocity = new Vector2();
+        float iVelocity_projection_normal;
+        Vector2 kVelocity_projection_normal = new Vector2();
+        Vector2 iVelocity_projection_tangent = new Vector2();
+        Vector2 kVelocity_projection_tangent = new Vector2();
+        float newiVelocity;
+        float iMass, kMass;
+        for (int i = 0; i < redArray.size; i++) {   //I just prefer for loops, they're tidier than while
+            /* I've moved the array update(dt) calls to separate loops.
+             * Having them here causes index out of bounds errors when
+             * a bubble is removed from one array and not the other.
+             */
+            for (int k = 0; k < blueArray.size; k++) {
+                if (redArray.get(i).getBound().overlaps((blueArray.get(k).getBound()))) {
+                    int blueMass = blueArray.get(k).getBubbleMass();
+                    int redMass = redArray.get(i).getBubbleMass();
+                    if (blueMass == redMass) {  //this clause removes both bubbles if they're equal mass
                         blueArray.removeIndex(k);
+                        redArray.removeIndex(i);
+                        i = i - 1; //resetting the iteration here means no bubbles are skipped on the this update
+                        k = k - 1;
+                    } else if (blueMass > redMass) { //removes the red and resizes the blue if the blue is larger
+                        blueMass = blueMass - redMass;
+                        blueArray.get(k).postCollision(blueMass);
+                        redArray.removeIndex(i);
+                        i = i - 1;
+                    } else { //removes the blue and resizes the red if red is bigger
+                        redMass = redMass - blueMass;
+                        redArray.get(i).postCollision(redMass);
+                        blueArray.removeIndex(k);
+                        k = k - 1;
+                    }
                         /*normal.set(bubbles.get(i).getPosition());
                         normal.sub(bubbles.get(k).getPosition());
                         unitNormal.set(normal);
-                        //unitNormal.nor();
+                        unitNormal.nor();
                         unitTangent.set(-unitNormal.y,unitNormal.x);
                         iVelocity.set(bubbles.get(i).getVelocity());
                         kVelocity.set(bubbles.get(k).getVelocity());
-                        iVelocity_projection_normal.set(unitNormal);
-                        iVelocity_projection_normal.dot(iVelocity);
+                        iVelocity_projection_normal=unitNormal.dot(iVelocity);
+                        //iVelocity_projection_normal.dot(iVelocity);
                         kVelocity_projection_normal.set(unitNormal);
                         kVelocity_projection_normal.dot(kVelocity);
                         iVelocity_projection_tangent.set(unitTangent);
@@ -121,30 +137,36 @@ public class PlayState extends State {
                         kVelocity_projection_tangent.dot(kVelocity);
                         iMass = (bubbles.get(i).getBubbleScale())/100f;
                         kMass = (bubbles.get(k).getBubbleScale())/100f;
-                        newiVelocity.set(iVelocity_projection_normal);
-                        newiVelocity.scl(iMass-kMass);
-                        newiVelocity.add(kVelocity_projection_normal.scl(2*kMass));
-                        newiVelocity.scl(1/(iMass+kMass));
+                        newiVelocity=iVelocity_projection_normal*(iMass-kMass);
+//                        newiVelocity.add(kVelocity_projection_normal.scl(2*kMass));
+//                        newiVelocity.scl(1/(iMass+kMass));
                         Vector2 newkVelocity=new Vector2();
                         newkVelocity.set(kVelocity_projection_normal);
                         newkVelocity.scl(kMass-iMass);
-                        newkVelocity.add(iVelocity_projection_normal.scl(2*iMass));
+//                        newkVelocity.add(iVelocity_projection_normal.scl(2*iMass));
                         newkVelocity.scl(1/(iMass+kMass));
-                        newiVelocity.dot(unitNormal);
+//                        newiVelocity.dot(unitNormal);
                         newkVelocity.dot(unitNormal);
 //                        iVelocity_projection_tangent.dot(unitTangent);
 //                        kVelocity_projection_tangent.dot(unitTangent);
-                        newiVelocity.add(iVelocity_projection_tangent);
+//                        newiVelocity.add(iVelocity_projection_tangent);
                         newkVelocity.add(kVelocity_projection_tangent);
-                        bubbles.get(i).postCollisionVelocity(newiVelocity);
+//                        bubbles.get(i).postCollisionVelocity(newiVelocity);
                         bubbles.get(k).postCollisionVelocity(newkVelocity);
 //                        bubbles.removeIndex(i);
 //                        bubbles.removeIndex(k);*/
-                    }
-                k++;
+                }
             }
-            i++;
-             //calculates position changes to bubble
+            //calculates position changes to bubble
+        }
+        /* The arrays need to be updated separately now as they
+         * will be different sizes post collision
+         */
+        for(int i=0; i<redArray.size; i++){
+            redArray.get(i).update(dt);
+        }
+        for(int i=0; i<blueArray.size; i++){
+            blueArray.get(i).update(dt);
         }
     }
 
