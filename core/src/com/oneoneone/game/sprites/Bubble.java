@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.BubbleMath;
 import com.oneoneone.game.states.PlayState;
 
@@ -16,181 +14,157 @@ import java.util.Random;
  * Created by David on 9/07/2016.
  */
 public class Bubble {
-    private static final int RANGE = 100;       //number of possible numbers
-    private static final int BLUESTARTX = 1280;  //starting x coordinate for blue
-    private static final int REDSTARTX = 0;   //starting x coordinate for red
-    //private static final int ALLSTARTY = -200;   //starting y coordinate for red and blue
-    private static final int BUOYANCY = 1;      //velocity added each update to give effect of buoyancy
-    private Texture texture;    //bubble texture (red or blue) stored here
-    private int bubbleMass;     //random "mass" of the bubble used to generate number in bubble and size
-    private int bubbleScale;    //bubble size scale calculated in Bubble()
-    private Sprite bubbleSprite;//sprite container for bubbles
-    private Vector2 velocity;   //speed at which bubble moves
-    private Vector2 position;   //position of bubble
-    private boolean value;          //number represented on screen for bubble, -ve = red, +ve = blue
-    private Circle bound;       //collision detection representation of bubble
-    private float scaleFactor = 0;
-    private int maxWidth;
-    private float dt; //test for velocity drag
-    float x_touch_location;
+    private static final int RANGE = 20;            //number of atoms
+    private static final int BLUESTARTX = 1280;     //starting x coordinate for blue
+    private static final int REDSTARTX = 0;         //starting x coordinate for red
+    private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
+    private int atomicNumber;           //random "mass" of the bubble used to generate number in bubble and size
+    private int sizeCurrent;            //current bubble size calculated in update()
+    private float scaleFactor = 0;      //the scaling factor used to reach final size
+    private int sizeFinal;              //final bubble size reached in update()
+    private float dt;                   //poll time of current (or last) update
+    private boolean isRed;              //is it red
+    float x_touch_location;             //set as data members to calculate velocity after touch
     float y_touch_location;
-    private boolean touched;
+    private Sprite sprite;          //sprite container for bubbles
+    private Vector2 velocity;       //speed at which bubble moves
+    private Vector2 position;       //position of bubble
+    private Circle circleBound;     //collision detection representation of bubble
 
     /**
      * Bubble() creates an instance of a bubble sprite for the array.
-     * The colour is selected using a random Boolean value; true creates a
+     * The colour is selected using a random Boolean isRed; true creates a
      * blue bubble, false creates red.
      * A random scale factor is then created to be attached to the bubble.
      */
     public Bubble(boolean isRed) {
+        this.isRed = isRed;
         Random rand = new Random();
-        touched = false;
-        value = isRed;
-        velocity = new Vector2(rand.nextInt(1000), rand.nextInt(1000));
-        if (!isRed) {
-            texture = new Texture("blue.png");
-            position = new Vector2(BLUESTARTX, BubbleMath.HEIGHT);
-        } else {
+        velocity = new Vector2(rand.nextInt(1000), rand.nextInt(1000));//set random velocity vector
+        sprite = new Sprite(setTexture(isRed));
+        atomicNumber = rand.nextInt(RANGE); //this generates the number that will be attached to the bubble and is used to define scale.
+        sizeFinal = (int)Math.round((0.4+(0.6* atomicNumber)/RANGE) * sprite.getWidth());//sets scale between 0.4 (100 pix) and 1 (250 pix)
+        circleBound = new Circle(position.x + (sizeCurrent / 2), position.y + sizeCurrent / 2, sizeCurrent / 2);
+    }
+    public Texture setTexture(boolean isRed){
+        Texture texture;
+        if (isRed) {
             texture = new Texture("red.png");
             position = new Vector2(REDSTARTX, 0);
+        } else {
+            texture = new Texture("blue.png");
+            position = new Vector2(BLUESTARTX, BubbleMath.HEIGHT);
         }
-        bubbleMass = rand.nextInt(20); //this generates the number value that will be attached to the bubble and is used to define scale.
-        maxWidth = (int)Math.round(texture.getWidth() * (0.4+(0.6*bubbleMass)/20));//When using larger bubble sprite use height*rand.nextDouble()
-        //maxWidth = rand.nextInt(5)*texture.getWidth();
-        bubbleSprite = new Sprite(texture);
-        bound = new Circle(position.x + (bubbleScale / 2), position.y + bubbleScale / 2, bubbleScale / 2);
-        //position.y = -bubbleScale; //so the bubble does not pop onto screen (turned off)
+        return texture;
     }
 
     public void update(float dt) { //dt = amount of time passed since last update
         this.dt = dt;
-        if (value) {
+        if (isRed) {
             velocity.add(0, -BUOYANCY);
         } else {
             velocity.add(0, BUOYANCY);
         }
         velocity.scl(dt);
-        if (scaleFactor <= 1) {
+        if ((scaleFactor <= 1)) {
             scaleFactor += dt; //collect dt
-            bubbleScale = Math.round(maxWidth * scaleFactor); //increase bubble scale
-            bound.setRadius(bubbleScale / 2);
-        } else {
+            sizeCurrent = Math.round(sizeFinal * scaleFactor); //increase bubble scale
+            circleBound.setRadius(sizeCurrent / 2);
+        } else{
             position.add(velocity.x, velocity.y);
+            circleBound.set(position, sizeCurrent / 2);
         }
-        cornerCollision();
+        cornerCollision(); //detect collision after coordinates updated
         velocity.scl(1 / dt);
-        bound.set(position, bubbleScale / 2);
-    }
-
-    public boolean collision(Circle C) {
-        return bound.overlaps(C);
-    }
-
-    public void cornerCollision() {
-        float offset = bubbleScale;
-        if ((position.y < 0)) {
-            position.y = 0;
-            velocity.y = -velocity.y;
-        }
-        if (position.y > (BubbleMath.HEIGHT - offset)) {
-            velocity.y = -velocity.y;
-            position.y = BubbleMath.HEIGHT - offset;
-        }
-        if (position.x < 0) {
-            position.x = 0;
-            velocity.x = -velocity.x;
-        }
-        if (position.x > (BubbleMath.WIDTH - offset)) {
-            position.x = BubbleMath.WIDTH - offset;
-            velocity.x = -velocity.x;
-        }
     }
 
     public Vector2 getPosition() {
         return position;
     }
 
-    /* grab_bubble() is called on touch and directs bubbles within 50 units
+    /* grabBubble() is called on touch and directs bubbles within 50 units
      * towards the touch location.
      */
-    public void grab_bubble(int pointer) {
+    public void grabBubble(int pointer) {
         //the following retrieve the x and y coordinates of the current touch.
-        float previous_x_touch = x_touch_location;
-        float previous_y_touch = y_touch_location;
-        x_touch_location = PlayState.SCALEX * (Gdx.input.getX(pointer));
-        y_touch_location = PlayState.SCALEY * (PlayState.SCREEN_HEIGHT - Gdx.input.getY(pointer));
+        //float previous_x_touch = x_touch_location;
+        //float previous_y_touch = y_touch_location;
+        x_touch_location = PlayState.X_SCALE_FACTOR * (Gdx.input.getX(pointer));
+        y_touch_location = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - Gdx.input.getY(pointer));
 
         //the following creates a pair of variables to check the difference between
         //the bubble position and the touch location.
-        float x_touch_difference = (position.x + bubbleScale / 2) - x_touch_location;
-        float y_touch_difference = (position.y + bubbleScale / 2) - y_touch_location;
-
-        //the magnitude
-        double touch_magnitude_difference = Math.hypot(x_touch_difference, y_touch_difference);
+        float x_touch_difference = (position.x + sizeCurrent / 2) - x_touch_location;
+        float y_touch_difference = (position.y + sizeCurrent / 2) - y_touch_location;
 
         //Check to see if the bubbles are in range of the touch and if so
         //direct them to the touch location.
-        touched = false;
-        if (touch_magnitude_difference < bubbleScale / 2) {
-            position.x = x_touch_location - (bubbleScale / 2);//-x_touch_difference; //set bubble to position of touch
-            position.y = y_touch_location - (bubbleScale / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
-            velocity.x = 0;
-            velocity.y = 0;
-            velocity.x = (x_touch_location - previous_x_touch) / dt; //reset velocity
-            velocity.y = (y_touch_location - previous_y_touch) / dt;
-            if (velocity.x >= 15 / dt) {
-                velocity.x = 15f / dt;
-            }
-            if (velocity.y >= 15 / dt) {
-                velocity.y = 15f / dt;
-            }
-            if (velocity.x <= -15 / dt) {
-                velocity.x = -15f / dt;
-            }
-            if (velocity.y <= -15 / dt) {
-                velocity.y = -15f / dt;
-            }
-            touched = true; //set touch to true TODO create "selected state" for bubble
+        if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
+            setThrowVelocity(x_touch_difference, y_touch_difference);
         }
     }
+    public void setThrowVelocity(float x, float y){
+        position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
+        position.y = y_touch_location - (sizeCurrent / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
+        velocity.set((x_touch_location - x) / dt,(y_touch_location - y) / dt);
+        if (velocity.x >= 15 / dt) {
+            velocity.x = 15f / dt;
+        }
+        if (velocity.y >= 15 / dt) {
+            velocity.y = 15f / dt;
+        }
+        if (velocity.x <= -15 / dt) {
+            velocity.x = -15f / dt;
+        }
+        if (velocity.y <= -15 / dt) {
+            velocity.y = -15f / dt;
+        }
 
-    public Circle getBound() {
-        return bound;
+    }
+    public Circle getCircleBound() {
+        return circleBound;
     }
 
     /** Work in progress; resizes surviving bubble after collision.
      *  I want to implement a change in vector and velocity based
      *  on the change in mass (i.e. dE=dMc^2->v=sqrt(2E/m), etc.
      */
-    public void postCollision(int newMass){
-        bubbleMass=newMass;
-        maxWidth = (int)Math.round(texture.getWidth() * (0.4+(0.6*bubbleMass)/20));
-        bubbleScale = maxWidth;
+    public void setNewSize(int newMass){
+        //scaleFactor = -atomicNumber/newMass;
+        atomicNumber = newMass;
+        sizeFinal = (int)Math.round(sprite.getWidth() * (0.4+(0.6* atomicNumber)/RANGE));
+        sizeCurrent = sizeFinal;
     //        velocity.set(newV);
     }
-
-    public boolean getValue() {
-        return value;
+    public void cornerCollision() {
+        if ((position.y < 0)) {
+            position.y = 0;
+            velocity.y = -velocity.y;
+        }
+        if (position.y > (BubbleMath.HEIGHT - sizeCurrent)) {
+            velocity.y = -velocity.y;
+            position.y = BubbleMath.HEIGHT - sizeCurrent;
+        }
+        if (position.x < 0) {
+            position.x = 0;
+            velocity.x = -velocity.x;
+        }
+        if (position.x > (BubbleMath.WIDTH - sizeCurrent)) {
+            position.x = BubbleMath.WIDTH - sizeCurrent;
+            velocity.x = -velocity.x;
+        }
     }
 
-    public Texture getBubble() {
-        return texture;
+    public Sprite getSprite() {
+        return sprite;
     }
 
-    public Sprite getBubbleSprite() {
-        return bubbleSprite;
+    public int getSizeCurrent() {
+        return sizeCurrent;
     }
 
-    public int getBubbleScale() {
-        return bubbleScale;
-    }
-
-    public int getBubbleMass() {
-        return bubbleMass;
-    }
-
-    public Vector2 getVelocity() {
-        return velocity;
+    public int getAtomicNumber() {
+        return atomicNumber;
     }
 }
 

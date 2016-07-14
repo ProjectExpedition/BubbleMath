@@ -3,7 +3,6 @@ package com.oneoneone.game.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.oneoneone.game.BubbleMath;
 
@@ -17,7 +16,7 @@ public class MenuState extends State {
     private int btnRadius;
     public MenuState(GameStateManager gsm) {
         super(gsm);
-        background = new Texture("bg.png");
+        background = new Texture("bg.jpg");
         startBtn = new Texture("blue.png");
         btnRadius = startBtn.getWidth();
         startBtnPosition = new Vector2((3*BubbleMath.WIDTH/4)-(startBtn.getWidth()/2),(BubbleMath.HEIGHT/2)-(btnRadius/2));
@@ -26,8 +25,8 @@ public class MenuState extends State {
     @Override
     public void handleInput() {
         if(Gdx.input.justTouched()) {
-            float x_touch_location = PlayState.SCALEX*(Gdx.input.getX());
-            float y_touch_location = PlayState.SCALEY*(PlayState.SCREEN_HEIGHT-Gdx.input.getY());
+            float x_touch_location = PlayState.X_SCALE_FACTOR *(Gdx.input.getX());
+            float y_touch_location = PlayState.Y_SCALE_FACTOR *(PlayState.SCREEN_HEIGHT-Gdx.input.getY());
 
             //the following creates a pair of variables to check the difference between
             //the bubble position and the touch location.
