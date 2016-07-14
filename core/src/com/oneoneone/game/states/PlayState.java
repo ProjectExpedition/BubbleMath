@@ -1,7 +1,9 @@
 package com.oneoneone.game.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.BubbleMath;
@@ -16,11 +18,13 @@ public class PlayState extends State {
     public static final float X_SCALE_FACTOR = (float) BubbleMath.WIDTH / SCREEN_WIDTH;
     public static final float Y_SCALE_FACTOR = (float) BubbleMath.HEIGHT / SCREEN_HEIGHT;
     private Texture background;
-//    private Texture redSpawner;
-//    private Texture blueSpawner;
+    private Texture redSpawner;
+    private Texture blueSpawner;
+    private Texture goal;
 //    private Texture redSpawner2;
 //    private Texture blueSpawner2;
     private float timeKeeper = 0; //collects amount of time that has passed in game
+    private BitmapFont font;
     private Array<Bubble> redArray; //Array Container of all bubbles
     private Array<Bubble> blueArray;
 
@@ -29,8 +33,11 @@ public class PlayState extends State {
      */
     public PlayState(GameStateManager gsm) {
         super(gsm); //super = active state class
-//        redSpawner = new Texture("red_spawner.png");
-//        blueSpawner = new Texture("blue_spawner.png");
+        //FileHandle filename = "DestructoBeamBB-200.fnt";
+        font = new BitmapFont();
+        redSpawner = new Texture("Rs_placeholder.png");
+        blueSpawner = new Texture("Bs_placeholder.png");
+        goal = new Texture("goal.png");
 //        redSpawner2 = new Texture("red_spawner_2.png");
 //        blueSpawner2 = new Texture("blue_spawner_2.png");
         background = new Texture("bg.jpg");
@@ -65,15 +72,15 @@ public class PlayState extends State {
     public void update(float dt) {
         handleInput(); //calls first to see if screen has been touched before updating
         timeKeeper += dt; //sums poll time
-        if (timeKeeper > 1) { //if a certain number of poll times have passed spawn a bubble
+        if (timeKeeper > 0.1) { //if a certain number of poll times have passed spawn a bubble
 //            if (redArray.get(0).getCircleBound().radius == 0 && redArray.get(0).getCircleBound().x == 0 && redArray.get(0).getCircleBound().y == 0) {
 //                redArray.set(0, new Bubble(true));
 //                blueArray.set(0, new Bubble(false));
 //            } //ctrl + / to bring back, taken out because it was chucking an error and
-            if (redArray.size < 10) {
+            if (redArray.size < 20) {
                 redArray.add(new Bubble(true));
             }
-            if (blueArray.size < 10){
+            if (blueArray.size < 20){
                 blueArray.add(new Bubble(false)); //spawns bubble
             }
             timeKeeper = 0;//resets sum poll time
@@ -182,6 +189,9 @@ public class PlayState extends State {
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(background, 0, 0);
+        //font.setScale(200); //not working for some reason
+        font.draw(sb, "13", BubbleMath.WIDTH/2, BubbleMath.HEIGHT/2);
+        sb.draw(goal, BubbleMath.WIDTH/2 - (goal.getWidth()/2), BubbleMath.HEIGHT/2 - (goal.getHeight()/2));
         //sb.draw(redSpawner2, BubbleMath.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         //sb.draw(blueSpawner2, 3 * BubbleMath.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         for (Bubble bub : redArray) {
@@ -192,8 +202,8 @@ public class PlayState extends State {
             sb.draw(bub.getSprite(), bub.getPosition().x, bub.getPosition().y,
                     bub.getSizeCurrent(), bub.getSizeCurrent());
         }
-        //sb.draw(redSpawner, BubbleMath.WIDTH / 4 - (blueSpawner.getWidth() / 4), 0);
-        //sb.draw(blueSpawner, 3 * BubbleMath.WIDTH / 4 - (blueSpawner.getWidth() / 4), 0);
+        sb.draw(redSpawner, 0, 0);
+        sb.draw(blueSpawner, BubbleMath.WIDTH - (blueSpawner.getWidth()), BubbleMath.HEIGHT - blueSpawner.getHeight());
         sb.end();
     }
 
