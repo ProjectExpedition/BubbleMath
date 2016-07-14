@@ -25,7 +25,7 @@ public class PlayState extends State {
     private Texture blueSpawner;
     private Texture redSpawner2;
     private Texture blueSpawner2;
-    private float dtsum = 0; //collects amount of time that has passed in game
+    private float timeKeeper = 0; //collects amount of time that has passed in game
     private Array<Bubble> redArray; //Array Container of all bubbles
     private Array<Bubble> blueArray;
 
@@ -69,17 +69,19 @@ public class PlayState extends State {
     @Override
     public void update(float dt) {
         handleInput(); //calls first to see if screen has been touched before updating
-        dtsum = dtsum + dt; //sums poll time
-        if (dtsum > 1.5) { //if a certain number of poll times have passed spawn a bubble
-            if (redArray.get(0).getBound().radius == 0 && redArray.get(0).getBound().x == 0 &&
-                    redArray.get(0).getBound().y == 0) {
-                redArray.set(0, new Bubble(true));
-                blueArray.set(0, new Bubble(false));
-            } else if (redArray.size < 10) {
-                blueArray.add(new Bubble(false)); //spawns bubble
+        timeKeeper += dt; //sums poll time
+        if (timeKeeper > 1) { //if a certain number of poll times have passed spawn a bubble
+//            if (redArray.get(0).getBound().radius == 0 && redArray.get(0).getBound().x == 0 && redArray.get(0).getBound().y == 0) {
+//                redArray.set(0, new Bubble(true));
+//                blueArray.set(0, new Bubble(false));
+//            } //ctrl + / to bring back, taken out because it was chucking an error and
+            if (redArray.size < 10) {
                 redArray.add(new Bubble(true));
             }
-            dtsum = 0;//resets sum poll time
+            if (blueArray.size < 10){
+                blueArray.add(new Bubble(false)); //spawns bubble
+            }
+            timeKeeper = 0;//resets sum poll time
         }
         /** This control loop detects collisions and calculates the new velocity vector
          *  based on the size of the colliding bubbles. It was hard to write.
@@ -95,16 +97,23 @@ public class PlayState extends State {
         Vector2 kVelocity_projection_tangent = new Vector2();
         float newiVelocity;
         float iMass, kMass;
+        int redOffset, blueOffset;
+        boolean collision;
         for (int i = 0; i < redArray.size; i++) {   //I just prefer for loops, they're tidier than while
             /* I've moved the array update(dt) calls to separate loops.
              * Having them here causes index out of bounds errors when
              * a bubble is removed from one array and not the other.
              */
             for (int k = 0; k < blueArray.size; k++) {
-                if (redArray.get(i).getBound().overlaps((blueArray.get(k).getBound()))) {
+                try {collision = redArray.get(i).getBound().overlaps((blueArray.get(k).getBound()));}
+                catch (Exception iob){
+                    break;
+                }
+                if (collision) {
                     int blueMass = blueArray.get(k).getBubbleMass();
                     int redMass = redArray.get(i).getBubbleMass();
                     if (blueMass == redMass) {  //this clause removes both bubbles if they're equal mass
+
                         blueArray.removeIndex(k);
                         redArray.removeIndex(i);
                         i = i - 1; //resetting the iteration here means no bubbles are skipped on the this update
@@ -120,6 +129,7 @@ public class PlayState extends State {
                         blueArray.removeIndex(k);
                         k = k - 1;
                     }
+                }
                         /*normal.set(bubbles.get(i).getPosition());
                         normal.sub(bubbles.get(k).getPosition());
                         unitNormal.set(normal);
@@ -156,7 +166,6 @@ public class PlayState extends State {
 //                        bubbles.removeIndex(i);
 //                        bubbles.removeIndex(k);*/
                 }
-            }
             //calculates position changes to bubble
         }
         /* The arrays need to be updated separately now as they

@@ -29,7 +29,7 @@ public class Bubble {
     private Vector2 position;   //position of bubble
     private boolean value;          //number represented on screen for bubble, -ve = red, +ve = blue
     private Circle bound;       //collision detection representation of bubble
-    private float sumscaledt = 0;
+    private float scaleFactor = 0;
     private int maxWidth;
     private float dt; //test for velocity drag
     float x_touch_location;
@@ -46,7 +46,7 @@ public class Bubble {
         Random rand = new Random();
         touched = false;
         value = isRed;
-        velocity = new Vector2(rand.nextInt(200), rand.nextInt(200));
+        velocity = new Vector2(rand.nextInt(1000), rand.nextInt(1000));
         if (!isRed) {
             texture = new Texture("blue.png");
             position = new Vector2(BLUESTARTX, BubbleMath.HEIGHT);
@@ -55,7 +55,7 @@ public class Bubble {
             position = new Vector2(REDSTARTX, 0);
         }
         bubbleMass = rand.nextInt(20); //this generates the number value that will be attached to the bubble and is used to define scale.
-        maxWidth = Math.round(texture.getWidth() * (bubbleMass / 20f));//When using larger bubble sprite use height*rand.nextDouble()
+        maxWidth = (int)Math.round(texture.getWidth() * (0.4+(0.6*bubbleMass)/20));//When using larger bubble sprite use height*rand.nextDouble()
         //maxWidth = rand.nextInt(5)*texture.getWidth();
         bubbleSprite = new Sprite(texture);
         bound = new Circle(position.x + (bubbleScale / 2), position.y + bubbleScale / 2, bubbleScale / 2);
@@ -70,9 +70,9 @@ public class Bubble {
             velocity.add(0, BUOYANCY);
         }
         velocity.scl(dt);
-        if (sumscaledt <= 1) {
-            sumscaledt = sumscaledt + dt; //collect dt
-            bubbleScale = Math.round(maxWidth * sumscaledt); //increase bubble scale
+        if (scaleFactor <= 1) {
+            scaleFactor += dt; //collect dt
+            bubbleScale = Math.round(maxWidth * scaleFactor); //increase bubble scale
             bound.setRadius(bubbleScale / 2);
         } else {
             position.add(velocity.x, velocity.y);
@@ -164,7 +164,7 @@ public class Bubble {
      */
     public void postCollision(int newMass){
         bubbleMass=newMass;
-        maxWidth = Math.round(texture.getWidth() * (bubbleMass / 20f));
+        maxWidth = (int)Math.round(texture.getWidth() * (0.4+(0.6*bubbleMass)/20));
         bubbleScale = maxWidth;
     //        velocity.set(newV);
     }
