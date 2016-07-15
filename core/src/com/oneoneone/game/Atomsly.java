@@ -2,18 +2,17 @@ package com.oneoneone.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.oneoneone.game.states.GameStateManager;
 import com.oneoneone.game.states.MenuState;
 
-public class BubbleMath extends ApplicationAdapter {
+public class Atomsly extends ApplicationAdapter {
 
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
-	public static final java.lang.String TITLE = "Bubble Math";
+	public static final java.lang.String TITLE = "Atom Math";
 	private GameStateManager gsm;
 	private SpriteBatch batch;
 	private OrthographicCamera cam;
@@ -22,8 +21,8 @@ public class BubbleMath extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 		gsm = new GameStateManager();
-		cam = new OrthographicCamera(BubbleMath.WIDTH, BubbleMath.HEIGHT);
-		cam.setToOrtho(false, BubbleMath.WIDTH, BubbleMath.HEIGHT);
+		cam = new OrthographicCamera(Atomsly.WIDTH, Atomsly.HEIGHT);
+		cam.setToOrtho(false, Atomsly.WIDTH, Atomsly.HEIGHT);
 		batch.setProjectionMatrix(cam.combined);
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		gsm.push(new MenuState(gsm));

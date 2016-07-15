@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.oneoneone.game.BubbleMath;
+import com.oneoneone.game.Atomsly;
 
 /**
  * Created by David on 9/07/2016.
@@ -19,7 +19,7 @@ public class MenuState extends State {
         background = new Texture("bg.png");
         startBtn = new Texture("blue.png");
         btnRadius = startBtn.getWidth();
-        startBtnPosition = new Vector2((3*BubbleMath.WIDTH/4)-(startBtn.getWidth()/2),(BubbleMath.HEIGHT/2)-(btnRadius/2));
+        startBtnPosition = new Vector2((Atomsly.WIDTH/2)-(startBtn.getWidth()/2),(Atomsly.HEIGHT/2)-(btnRadius/2));
     }
 
     @Override
