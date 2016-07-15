@@ -151,23 +151,23 @@ public class PlayState extends State {
                         iMass = (bubbles.get(i).getSizeCurrent())/100f;
                         kMass = (bubbles.get(k).getSizeCurrent())/100f;
                         newiVelocity=iVelocity_projection_normal*(iMass-kMass);
-//                        newiVelocity.add(kVelocity_projection_normal.scl(2*kMass));
-//                        newiVelocity.scl(1/(iMass+kMass));
+                        newiVelocity.add(kVelocity_projection_normal.scl(2*kMass));
+                        newiVelocity.scl(1/(iMass+kMass));
                         Vector2 newkVelocity=new Vector2();
                         newkVelocity.set(kVelocity_projection_normal);
                         newkVelocity.scl(kMass-iMass);
-//                        newkVelocity.add(iVelocity_projection_normal.scl(2*iMass));
+                        newkVelocity.add(iVelocity_projection_normal.scl(2*iMass));
                         newkVelocity.scl(1/(iMass+kMass));
-//                        newiVelocity.dot(unitNormal);
+                        newiVelocity.dot(unitNormal);
                         newkVelocity.dot(unitNormal);
-//                        iVelocity_projection_tangent.dot(unitTangent);
-//                        kVelocity_projection_tangent.dot(unitTangent);
-//                        newiVelocity.add(iVelocity_projection_tangent);
+                        iVelocity_projection_tangent.dot(unitTangent);
+                        kVelocity_projection_tangent.dot(unitTangent);
+                        newiVelocity.add(iVelocity_projection_tangent);
                         newkVelocity.add(kVelocity_projection_tangent);
-//                        bubbles.get(i).postCollisionVelocity(newiVelocity);
+                        bubbles.get(i).postCollisionVelocity(newiVelocity);
                         bubbles.get(k).postCollisionVelocity(newkVelocity);
-//                        bubbles.removeIndex(i);
-//                        bubbles.removeIndex(k);*/
+                        bubbles.removeIndex(i);
+                        bubbles.removeIndex(k);*/
                 }
             //calculates position changes to bubble
         }
@@ -211,4 +211,5 @@ public class PlayState extends State {
     public void dispose() {//TODO write a dispose method to avoid memory leaks
 
     }
+
 }
