@@ -235,11 +235,20 @@ public class PlayState extends State {
         sb.draw(redSpawner, 0, 0);
         sb.draw(blueSpawner, Atomsly.WIDTH - (blueSpawner.getWidth()), Atomsly.HEIGHT - blueSpawner.getHeight());
         sb.end();
+        if (sum==49){
+            gsm.get(new MenuState(gsm));
+            dispose();
+        }
     }
 
     @Override
     public void dispose() {//TODO write a dispose method to avoid memory leaks
-
+        background.dispose();
+        font.dispose();
+        redArray.clear();
+        blueArray.clear();
+        redSpawner.dispose();
+        blueSpawner.dispose();
     }
 
 }
