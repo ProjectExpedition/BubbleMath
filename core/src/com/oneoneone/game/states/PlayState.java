@@ -1,6 +1,7 @@
 package com.oneoneone.game.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -32,6 +33,7 @@ public class PlayState extends State {
     private Array<Atom> blueArray;
     BitmapFont font;
     private int goal;
+    private int score = 0;
     private Random rand;
 
     /* PlayState(GameStateManager gsm) is called after Menu State
@@ -83,20 +85,8 @@ public class PlayState extends State {
             }
         }
     }
-
-    /* update(float dt) is called in GameStateManager (see states.peek().update(dt))
-    * updates the mathematics of everything that happens; velocity, coordinates, inputs,
-    * checking,etc
-    */
-    @Override
-    public void update(float dt) {
-        handleInput(); //calls first to see if screen has been touched before updating
-        timeKeeper += dt; //sums poll time
-        if (timeKeeper > 10) { //if a certain number of poll times have passed spawn a bubble
-//            if (redArray.get(0).getCircleBound().radius == 0 && redArray.get(0).getCircleBound().x == 0 && redArray.get(0).getCircleBound().y == 0) {
-//                redArray.set(0, new Atom(true));
-//                blueArray.set(0, new Atom(false));
-//            } //ctrl + / to bring back, taken out because it was chucking an error and
+    private void doSpawn(){
+        if (timeKeeper > 10){ //if a certain number of poll times have passed spawn a bubble
             if (redArray.size < 5) {
                 redArray.add(new Atom(true));
             }
@@ -105,10 +95,9 @@ public class PlayState extends State {
             }
             timeKeeper = 0;//resets sum poll time
         }
-        /** This control loop detects collisions and calculates the new velocity vector
-         *  based on the size of the colliding bubbles. It was hard to write.
-         **/
-//        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
+    }
+    private void annihilate(){
+        //        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
 //        Vector2 unitNormal = new Vector2();
 //        Vector2 unitTangent = new Vector2();
 //        Vector2 iVelocity = new Vector2();
@@ -122,12 +111,7 @@ public class PlayState extends State {
 //        int redOffset, blueOffset;
         boolean collision;
         int blueMass,redMass;
-        //int[] redIndex = new int[10] , blueIndex = new int[10];
-        for (int i = 0; i < redArray.size; i++) {   //I just prefer for loops, they're tidier than while
-            /* I've moved the array update(dt) calls to separate loops.
-             * Having them here causes index out of bounds errors when
-             * a bubble is removed from one array and not the other.
-             */
+        for (int i = 0; i < redArray.size; i++) {
             for (int k = 0; k < blueArray.size; k++) {
                 try {collision = redArray.get(i).getCircleBound().overlaps((blueArray.get(k).getCircleBound()));}
                 catch (Exception iob){ //catch if index is out of bounds
@@ -188,13 +172,21 @@ public class PlayState extends State {
                         bubbles.get(k).postCollisionVelocity(newkVelocity);
                         bubbles.removeIndex(i);
                         bubbles.removeIndex(k);*/
-                }
+            }
             //calculates position changes to bubble
         }
-        /* The arrays need to be updated separately now as they
-         * will be different sizes post collision
-         */
-        sum = 0;
+    }
+    /* update(float dt) is called in GameStateManager (see states.peek().update(dt))
+    * updates the mathematics of everything that happens; velocity, coordinates, inputs,
+    * checking,etc
+    */
+    @Override
+    public void update(float dt) {
+        handleInput(); //calls first to see if screen has been touched before updating
+        timeKeeper += dt; //sums poll time
+        doSpawn();
+        annihilate();
+        sum = 0; //reset sum
         for(int i=0; i<redArray.size; i++){
             redArray.get(i).update(dt);
             sum += redArray.get(i).getAtomicNumber();
@@ -216,7 +208,8 @@ public class PlayState extends State {
         font.draw(sb, Integer.toString(sum), Atomsly.WIDTH/2 - FONT_SIZE/2, Atomsly.HEIGHT/2 +FONT_SIZE/2);
         font.draw(sb, "GOAL: "+goal, Atomsly.WIDTH/2 - 4*FONT_SIZE/2, 3* Atomsly.HEIGHT/4 +FONT_SIZE/2);
         font.draw(sb, Integer.toString(goal-sum), Atomsly.WIDTH/2 - FONT_SIZE/2, Atomsly.HEIGHT/4 +FONT_SIZE/2);
-        //font.getData().setScale(25);
+        font.setColor(Color.WHITE);
+        font.draw(sb, Integer.toString(score), FONT_SIZE/2, Atomsly.HEIGHT - FONT_SIZE/2);
         //sb.draw(goal, Atomsly.WIDTH/2 - (goal.getWidth()/2), Atomsly.HEIGHT/2 - (goal.getHeight()/2));
         //sb.draw(redSpawner2, Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         //sb.draw(blueSpawner2, 3 * Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
@@ -243,6 +236,12 @@ public class PlayState extends State {
         sb.end();
         if (sum==goal){
             goal=rand.nextInt(50);
+            score++;
+            if (score == 3){
+                gsm.get(new MenuState(gsm));
+                dispose();
+            }
+
         }
     }
 
