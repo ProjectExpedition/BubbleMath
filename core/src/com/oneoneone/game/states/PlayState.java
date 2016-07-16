@@ -9,6 +9,8 @@ import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.sprites.Atom;
 
+import java.util.Random;
+
 /**
  * Created by David on 9/07/2016.
  */
@@ -29,6 +31,8 @@ public class PlayState extends State {
     private Array<Atom> redArray; //Array Container of all bubbles
     private Array<Atom> blueArray;
     BitmapFont font;
+    private int goal;
+    private Random rand;
 
     /* PlayState(GameStateManager gsm) is called after Menu State
      * Allocates memory and calls constructors for all data members.
@@ -38,6 +42,8 @@ public class PlayState extends State {
         buildFont();
         buildTextures();
         buildAtoms();
+        rand=new Random();
+        goal=rand.nextInt(50);
     }
     private void buildAtoms(){
         redArray = new Array<Atom>();
@@ -105,7 +111,7 @@ public class PlayState extends State {
 //        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
 //        Vector2 unitNormal = new Vector2();
 //        Vector2 unitTangent = new Vector2();
-//        Vector2 iVelocity = new Vector2();
+//        Vector2 iVelocity = new Vector2();h
 //        Vector2 kVelocity = new Vector2();
 //        float iVelocity_projection_normal;
 //        Vector2 kVelocity_projection_normal = new Vector2();
@@ -208,8 +214,8 @@ public class PlayState extends State {
         sb.draw(background, 0, 0);
         font.setColor(com.badlogic.gdx.graphics.Color.GRAY);
         font.draw(sb, Integer.toString(sum), Atomsly.WIDTH/2 - FONT_SIZE/2, Atomsly.HEIGHT/2 +FONT_SIZE/2);
-        font.draw(sb, "GOAL: 49", Atomsly.WIDTH/2 - 4*FONT_SIZE/2, 3* Atomsly.HEIGHT/4 +FONT_SIZE/2);
-        font.draw(sb, Integer.toString(49-sum), Atomsly.WIDTH/2 - FONT_SIZE/2, Atomsly.HEIGHT/4 +FONT_SIZE/2);
+        font.draw(sb, "GOAL: "+goal, Atomsly.WIDTH/2 - 4*FONT_SIZE/2, 3* Atomsly.HEIGHT/4 +FONT_SIZE/2);
+        font.draw(sb, Integer.toString(goal-sum), Atomsly.WIDTH/2 - FONT_SIZE/2, Atomsly.HEIGHT/4 +FONT_SIZE/2);
         //font.getData().setScale(25);
         //sb.draw(goal, Atomsly.WIDTH/2 - (goal.getWidth()/2), Atomsly.HEIGHT/2 - (goal.getHeight()/2));
         //sb.draw(redSpawner2, Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
@@ -235,6 +241,9 @@ public class PlayState extends State {
         sb.draw(redSpawner, 0, 0);
         sb.draw(blueSpawner, Atomsly.WIDTH - (blueSpawner.getWidth()), Atomsly.HEIGHT - blueSpawner.getHeight());
         sb.end();
+        if (sum==goal){
+            goal=rand.nextInt(50);
+        }
     }
 
     @Override
