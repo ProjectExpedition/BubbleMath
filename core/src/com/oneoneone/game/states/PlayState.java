@@ -74,7 +74,7 @@ public class PlayState extends State {
     */
     @Override
     protected void handleInput() {
-        for (int i = 0; i < 1; i++) {       //initializes to count maximum of two touch pointers
+        for (int i = 0; i <= 1; i++) {       //initializes to count maximum of two touch pointers
             if (Gdx.input.isTouched(i)) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
                 for (Atom bub : redArray) {
                     bub.grabBubble(i);

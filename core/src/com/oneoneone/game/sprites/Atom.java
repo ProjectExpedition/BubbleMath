@@ -87,8 +87,8 @@ public class Atom {
      */
     public void grabBubble(int pointer) {
         //the following retrieve the x and y coordinates of the current touch.
-        float previous_x_touch = x_touch_location;
-        float previous_y_touch = y_touch_location;
+        float previous_x_touch = PlayState.X_SCALE_FACTOR * (Gdx.input.getDeltaX(pointer));
+        float previous_y_touch = PlayState.Y_SCALE_FACTOR * (Gdx.input.getDeltaY(pointer));
         x_touch_location = PlayState.X_SCALE_FACTOR * (Gdx.input.getX(pointer));
         y_touch_location = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - Gdx.input.getY(pointer));
 
@@ -97,32 +97,31 @@ public class Atom {
         float x_touch_difference = (position.x + sizeCurrent / 2) - x_touch_location;
         float y_touch_difference = (position.y + sizeCurrent / 2) - y_touch_location;
 
-        if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
-            position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
-            position.y = y_touch_location - (sizeCurrent / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
-            //velocity.x = 0;
-            //velocity.y = 0;
-            velocity.x = (x_touch_location - previous_x_touch) / dt; //reset velocity
-            velocity.y = (y_touch_location - previous_y_touch) / dt;
-            if (velocity.x >= 15 / dt) {
-                velocity.x = 15f / dt;
-            }
-            if (velocity.y >= 15 / dt) {
-                velocity.y = 15f / dt;
-            }
-            if (velocity.x <= -15 / dt) {
-                velocity.x = -15f / dt;
-            }
-            if (velocity.y <= -15 / dt) {
-                velocity.y = -15f / dt;
-            }
-
-            //Check to see if the bubbles are in range of the touch and if so
-        //direct them to the touch location.
+            if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
+                position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
+                position.y = y_touch_location - (sizeCurrent / 2);//-y_touch_difference;
+                //velocity.x = 0;
+                //velocity.y = 0;
+                velocity.x = (previous_x_touch) / dt; //reset velocity
+                velocity.y = (previous_y_touch) / dt;
+                if (velocity.x >= 15 / dt) {
+                    velocity.x = 15f / dt;
+                }
+                if (velocity.y >= 15 / dt) {
+                    velocity.y = 15f / dt;
+                }
+                if (velocity.x <= -15 / dt) {
+                    velocity.x = -15f / dt;
+                }
+                if (velocity.y <= -15 / dt) {
+                    velocity.y = -15f / dt;
+                }
+                //Check to see if the bubbles are in range of the touch and if so
+                //direct them to the touch location.
 //        if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
 //            setThrowVelocity(x_touch_difference, y_touch_difference);
+            }
         }
-    }
     public void setThrowVelocity(float x, float y){
         position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
         position.y = y_touch_location - (sizeCurrent / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
