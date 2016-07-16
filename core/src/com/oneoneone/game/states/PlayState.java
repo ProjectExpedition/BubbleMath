@@ -111,7 +111,7 @@ public class PlayState extends State {
 //        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
 //        Vector2 unitNormal = new Vector2();
 //        Vector2 unitTangent = new Vector2();
-//        Vector2 iVelocity = new Vector2();h
+//        Vector2 iVelocity = new Vector2();
 //        Vector2 kVelocity = new Vector2();
 //        float iVelocity_projection_normal;
 //        Vector2 kVelocity_projection_normal = new Vector2();
@@ -248,7 +248,12 @@ public class PlayState extends State {
 
     @Override
     public void dispose() {//TODO write a dispose method to avoid memory leaks
-
+        background.dispose();
+        font.dispose();
+        redArray.clear();
+        blueArray.clear();
+        redSpawner.dispose();
+        blueSpawner.dispose();
     }
 
 }
