@@ -33,16 +33,16 @@ public class PlayState extends State {
     //private BitmapFont font;
     private Array<Atom> redArray; //Array Container of all bubbles
     private Array<Atom> blueArray;
-    BitmapFont font;
+    private BitmapFont font;
     private int goal;
     private int score = 0;
     private Random rand;
     public int grabLoop = 0;
 
-    /* PlayState(GameStateManager gsm) is called after Menu State
-     * Allocates memory and calls constructors for all data members.
-     */
     public PlayState(GameStateManager gsm) {
+        /* PlayState(GameStateManager gsm) is called after Menu State
+        * Allocates memory and calls constructors for all data members.
+        */
         super(gsm); //super = active state class
         buildFont();
         buildTextures();
@@ -75,23 +75,22 @@ public class PlayState extends State {
         background = new Texture("bg.png");
     }
 
-    /* handleInput() checks if the person has touched the screen
-    *  A maximum of 2 touch pointers are counted
-    */
     @Override
     protected void handleInput() {
+        /* handleInput() checks if the person has touched the screen
+        *  A maximum of 2 touch pointers are counted
+        */
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int x, int y, int pointer, int button) {
-
 //                for (int i = 0; i <= 1; i++) {       //initializes to count maximum of two touch pointers
                 if (pointer < 2) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
-                        for (Atom bub : redArray) {
-                            bub.grabBubble(pointer);
-                        }
-                        for (Atom bub : blueArray) {
-                            bub.grabBubble(pointer);
-                        }
+                    for (Atom bub : redArray) {
+                        bub.grabBubble(pointer);
+                    }
+                    for (Atom bub : blueArray) {
+                        bub.grabBubble(pointer);
+                    }
                 }
                 return true; // return true to indicate the event was handled
             }
@@ -124,7 +123,6 @@ public class PlayState extends State {
                 return false;
             }
         });
-
     }
 
     private void doSpawn() {
@@ -221,12 +219,12 @@ public class PlayState extends State {
         }
     }
 
-    /* update(float dt) is called in GameStateManager (see states.peek().update(dt))
-    * updates the mathematics of everything that happens; velocity, coordinates, inputs,
-    * checking,etc
-    */
     @Override
     public void update(float dt) {
+        /* update(float dt) is called in GameStateManager (see states.peek().update(dt))
+        * updates the mathematics of everything that happens; velocity, coordinates, inputs,
+        * checking,etc
+        */
         handleInput(); //calls first to see if screen has been touched before updating
         timeKeeper += dt; //sums poll time
         doSpawn();
@@ -242,11 +240,11 @@ public class PlayState extends State {
         }
     }
 
-    /* render(float dt) draws all sprites to SpriteBatch declared in Atomsly
-    * draws after all positions and conditions have been calculated in update in Atomsly render
-    */
     @Override
     public void render(SpriteBatch sb) {
+        /* render(float dt) draws all sprites to SpriteBatch declared in Atomsly
+        * draws after all positions and conditions have been calculated in update in Atomsly render
+        */
         sb.begin();
         sb.draw(background, 0, 0);
         font.setColor(com.badlogic.gdx.graphics.Color.GRAY);
@@ -290,7 +288,6 @@ public class PlayState extends State {
                 gsm.get(new MenuState(gsm));
                 dispose();
             }
-
         }
     }
 
@@ -303,5 +300,4 @@ public class PlayState extends State {
         redSpawner.dispose();
         blueSpawner.dispose();
     }
-
 }

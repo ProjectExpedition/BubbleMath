@@ -102,27 +102,30 @@ public class Atom {
             grabbed_by = pointer;
         }
     }
+
     /* dragBubble is called when a drag even is detected and causes the attached bubble to follow
      *  the player's touch.
      */
     public void dragBubble(float x, float y, int pointer) {
         position.x = PlayState.X_SCALE_FACTOR * x - (sizeCurrent / 2);
         position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y) - (sizeCurrent / 2);
-        velocity.set((Gdx.input.getDeltaX(pointer) / dt), (Gdx.input.getDeltaY(pointer) / dt));
-        if (velocity.x >= 15 / dt) {
-            velocity.x = 15f / dt;
-        }
-        if (velocity.y >= 15 / dt) {
-            velocity.y = 15f / dt;
-        }
-        if (velocity.x <= -15 / dt) {
-            velocity.x = -15f / dt;
-        }
-        if (velocity.y <= -15 / dt) {
-            velocity.y = -15f / dt;
-        }
+        velocity.set(0, 0);
+//        velocity.set((Gdx.input.getDeltaX(pointer) / dt), (Gdx.input.getDeltaY(pointer) / dt));
+//        if (velocity.x >= 15 / dt) {
+//            velocity.x = 15f / dt;
+//        }
+//        if (velocity.y >= 15 / dt) {
+//            velocity.y = 15f / dt;
+//        }
+//        if (velocity.x <= -15 / dt) {
+//            velocity.x = -15f / dt;
+//        }
+//        if (velocity.y <= -15 / dt) {
+//            velocity.y = -15f / dt;
+//        }
 
     }
+
     /* releaseBubble releases the bubbles from grabbed state on touchUp.
      */
     public void releaseBubble(int pointer) {
@@ -146,7 +149,6 @@ public class Atom {
         sizeFinal = (int) Math.round(sprite.getWidth() * (0.4 + (0.6 * atomicNumber) / RANGE));
         sizeFinal = sizeFinal * 250 / 570; //ratio to get large atom (570) to normal atom (250)
         sizeCurrent = sizeFinal;
-        //        velocity.set(newV);
     }
 
     public void cornerCollision() {
