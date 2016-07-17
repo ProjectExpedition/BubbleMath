@@ -32,6 +32,7 @@ public class Atom {
     private Circle circleBound;     //collision detection representation of bubble
     public boolean is_grabbed = false;
     public int grabbed_by;
+
     /**
      * Atom() creates an instance of a bubble sprite for the array.
      * The colour is selected using a random Boolean isRed; true creates a
@@ -99,7 +100,7 @@ public class Atom {
 
         if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
             is_grabbed = true;
-            grabbed_by=pointer;
+            grabbed_by = pointer;
         }
     }
 /*            position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
@@ -128,8 +129,8 @@ public class Atom {
     }*/
 
     public void dragBubble(float x, float y, int pointer) {
-        position.x = PlayState.X_SCALE_FACTOR *x - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
-        position.y = PlayState.Y_SCALE_FACTOR *(PlayState.SCREEN_HEIGHT -y) - (sizeCurrent / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
+        position.x = PlayState.X_SCALE_FACTOR * x - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
+        position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y) - (sizeCurrent / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
         velocity.set((Gdx.input.getDeltaX(pointer) / dt), (Gdx.input.getDeltaY(pointer) / dt));
         if (velocity.x >= 15 / dt) {
             velocity.x = 15f / dt;
@@ -145,8 +146,11 @@ public class Atom {
         }
 
     }
-    public void releaseBubble(){
-        is_grabbed=false;
+
+    public void releaseBubble(int pointer) {
+        if (grabbed_by == pointer) {
+            is_grabbed = false;
+        }
     }
 
     public Circle getCircleBound() {

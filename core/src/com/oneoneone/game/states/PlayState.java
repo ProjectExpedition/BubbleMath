@@ -9,8 +9,11 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.sprites.Atom;
+
 import java.util.Random;
+
 import com.badlogic.gdx.InputAdapter;
+
 /**
  * Created by David on 9/07/2016.
  */
@@ -34,7 +37,6 @@ public class PlayState extends State {
     private int goal;
     private int score = 0;
     private Random rand;
-    private boolean is_grabbed=false;
 
     /* PlayState(GameStateManager gsm) is called after Menu State
      * Allocates memory and calls constructors for all data members.
@@ -77,44 +79,43 @@ public class PlayState extends State {
     */
     @Override
     protected void handleInput() {
-        Gdx.input.setInputProcessor(new InputAdapter () {
+        Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
-            public boolean touchDown (int x, int y, int pointer, int button) {
+            public boolean touchDown(int x, int y, int pointer, int button) {
 
 //                for (int i = 0; i <= 1; i++) {       //initializes to count maximum of two touch pointers
-                    if (pointer < 2) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
-                        for (Atom bub : redArray) {
-                            bub.grabBubble(pointer);
-                        }
-                        for (Atom bub : blueArray) {
-                            bub.grabBubble(pointer);
-                        }
-                    }
-                //}
-                return true; // return true to indicate the event was handled
-            }
-
-            @Override
-            public boolean touchUp (int x, int y, int pointer, int button) {
-                for (Atom bub:redArray){
-                    bub.releaseBubble();
-                }
-                for (Atom bub:blueArray){
-                    bub.releaseBubble();
-                }
-                return true; // return true to indicate the event was handled
-            }
-
-            @Override
-            public boolean touchDragged (int x, int y, int pointer){
-                if (pointer<2){
+                if (pointer < 2) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
                     for (Atom bub : redArray) {
-                        if (bub.is_grabbed==true&&bub.grabbed_by==pointer) {
+                        bub.grabBubble(pointer);
+                    }
+                    for (Atom bub : blueArray) {
+                        bub.grabBubble(pointer);
+                    }
+                }
+                return true; // return true to indicate the event was handled
+            }
+
+            @Override
+            public boolean touchUp(int x, int y, int pointer, int button) {
+                for (Atom bub : redArray) {
+                    bub.releaseBubble(pointer);
+                }
+                for (Atom bub : blueArray) {
+                    bub.releaseBubble(pointer);
+                }
+                return true; // return true to indicate the event was handled
+            }
+
+            @Override
+            public boolean touchDragged(int x, int y, int pointer) {
+                if (pointer < 2) {
+                    for (Atom bub : redArray) {
+                        if (bub.is_grabbed && bub.grabbed_by == pointer) {
                             bub.dragBubble(x, y, pointer);
                         }
                     }
                     for (Atom bub : blueArray) {
-                        if (bub.is_grabbed==true&&bub.grabbed_by==pointer) {
+                        if (bub.is_grabbed && bub.grabbed_by == pointer) {
                             bub.dragBubble(x, y, pointer);
                         }
                     }
