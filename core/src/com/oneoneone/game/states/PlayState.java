@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.sprites.Atom;
@@ -23,7 +24,11 @@ public class PlayState extends State {
     public static final float X_SCALE_FACTOR = (float) Atomsly.WIDTH / SCREEN_WIDTH;
     public static final float Y_SCALE_FACTOR = (float) Atomsly.HEIGHT / SCREEN_HEIGHT;
     private static final int FONT_SIZE = 72;
-    private int sum = 0;
+    private int sumRed = 0;
+    private int sumBlue = 0;
+    private float redPositionX;
+    private float bluePositionX;
+    private Texture field;
     private Texture background;
     private Texture redSpawner;
     private Texture blueSpawner;
@@ -38,6 +43,8 @@ public class PlayState extends State {
     private int score = 0;
     private Random rand;
     public int grabLoop = 0;
+    //private ShapeRenderer SR;
+
 
     public PlayState(GameStateManager gsm) {
         /* PlayState(GameStateManager gsm) is called after Menu State
@@ -48,14 +55,15 @@ public class PlayState extends State {
         buildTextures();
         buildAtoms();
         rand = new Random();
-        goal = rand.nextInt(50);
+        goal = rand.nextInt(50-10)+10;
+        //SR = new ShapeRenderer();
     }
 
     private void buildAtoms() {
         redArray = new Array<Atom>();
         blueArray = new Array<Atom>();
-        redArray.add(new Atom(true)); //creates first bubble
-        blueArray.add(new Atom(false));
+        redArray.add(new Atom(true, redPositionX)); //creates first bubble
+        blueArray.add(new Atom(false, bluePositionX));
     }
 
     private void buildFont() {
@@ -70,6 +78,7 @@ public class PlayState extends State {
     private void buildTextures() {
         redSpawner = new Texture("spawn_red.png");
         blueSpawner = new Texture("spawn_blue.png");
+        field = new Texture("field.png");
 //        redSpawner2 = new Texture("red_spawner_2.png");
 //        blueSpawner2 = new Texture("blue_spawner_2.png");
         background = new Texture("bg.png");
@@ -128,10 +137,10 @@ public class PlayState extends State {
     private void doSpawn() {
         if (timeKeeper > 10) { //if a certain number of poll times have passed spawn a bubble
             if (redArray.size < 5) {
-                redArray.add(new Atom(true));
+                redArray.add(new Atom(true, redPositionX));
             }
             if (blueArray.size < 5) {
-                blueArray.add(new Atom(false)); //spawns bubble
+                blueArray.add(new Atom(false, bluePositionX)); //spawns bubble
             }
             timeKeeper = 0;//resets sum poll time
         }
@@ -229,15 +238,24 @@ public class PlayState extends State {
         timeKeeper += dt; //sums poll time
         doSpawn();
         annihilate();
-        sum = 0; //reset sum
+        sumRed = 0; //reset sum
+        sumBlue = 0;
         for (int i = 0; i < redArray.size; i++) {
             redArray.get(i).update(dt);
-            sum += redArray.get(i).getAtomicNumber();
+            sumRed += redArray.get(i).getAtomicNumber();
         }
         for (int i = 0; i < blueArray.size; i++) {
             blueArray.get(i).update(dt);
-            sum += blueArray.get(i).getAtomicNumber();
+            sumBlue += blueArray.get(i).getAtomicNumber();
         }
+        updateField();
+    }
+    private void updateField(){
+        float Rprop = 1 - sumRed/(float)goal;
+        float Bprop = 1 + sumBlue/(float)goal;
+        float move = (Atomsly.WIDTH - field.getWidth())/2;
+        redPositionX = move * Rprop;
+        bluePositionX = move * Bprop;
     }
 
     @Override
@@ -248,15 +266,18 @@ public class PlayState extends State {
         sb.begin();
         sb.draw(background, 0, 0);
         font.setColor(com.badlogic.gdx.graphics.Color.GRAY);
-        font.draw(sb, Integer.toString(sum), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 2 + FONT_SIZE / 2);
+        font.draw(sb, Integer.toString(sumRed+sumBlue), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 2 + FONT_SIZE / 2);
         font.draw(sb, "GOAL: " + goal, Atomsly.WIDTH / 2 - 4 * FONT_SIZE / 2, 3 * Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
-        font.draw(sb, Integer.toString(goal - sum), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
+        font.draw(sb, Integer.toString(goal - sumRed+sumBlue), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
         font.setColor(Color.WHITE);
         font.draw(sb, Integer.toString(score), FONT_SIZE / 2, Atomsly.HEIGHT - FONT_SIZE / 2);
         //sb.draw(goal, Atomsly.WIDTH/2 - (goal.getWidth()/2), Atomsly.HEIGHT/2 - (goal.getHeight()/2));
         //sb.draw(redSpawner2, Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         //sb.draw(blueSpawner2, 3 * Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         font.setColor(com.badlogic.gdx.graphics.Color.RED);
+        sb.draw(field, redPositionX, 0);
+        sb.draw(field, bluePositionX, 0);
+
         for (Atom bub : redArray) {
 //            Sprite sprite = bub.getSprite();
 //            sb.draw(sprite, bub.getPosition().x, bub.getPosition().y, sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
@@ -280,9 +301,20 @@ public class PlayState extends State {
         }
         sb.draw(redSpawner, 0, 0);
         sb.draw(blueSpawner, Atomsly.WIDTH - (blueSpawner.getWidth()), Atomsly.HEIGHT - blueSpawner.getHeight());
+//        SR.setColor(Color.BLACK);
+//        SR.begin(ShapeRenderer.ShapeType.Line);
+//        for (Atom bub : redArray) {
+//            SR.circle(bub.getCircleBound().x,bub.getCircleBound().y,bub.getCircleBound().radius);
+//        }
+//        for (Atom bub : blueArray) {
+//            SR.circle(bub.getCircleBound().x,bub.getCircleBound().y,bub.getCircleBound().radius);
+//        }
+//        SR.end();
         sb.end();
-        if (sum == goal) {
-            goal = rand.nextInt(50);
+
+
+        if (sumRed+sumBlue == goal) {
+            goal = rand.nextInt(50-10)+10;
             score++;
             if (score == 3) {
                 gsm.get(new MenuState(gsm));

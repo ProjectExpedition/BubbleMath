@@ -19,7 +19,7 @@ public class Atom {
     private static final int REDSTARTX = 0;         //starting x coordinate for red
     private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
     private int atomicNumber;           //random "mass" of the bubble used to generate number in bubble and size
-    private int sizeCurrent;            //current bubble size calculated in update()
+    private int sizeCurrent = 0;            //current bubble size calculated in update()
     private float scaleFactor = 0;      //the scaling factor used to reach final size
     private int sizeFinal;              //final bubble size reached in update()
     private float dt;                   //poll time of current (or last) update
@@ -39,24 +39,24 @@ public class Atom {
      * blue bubble, false creates red.
      * A random scale factor is then created to be attached to the bubble.
      */
-    public Atom(boolean isRed) {
+    public Atom(boolean isRed,float x) {
         this.isRed = isRed;
         Random rand = new Random();
         velocity = new Vector2(rand.nextInt(150), rand.nextInt(150));//set random velocity vector
-        sprite = new Sprite(buildTexture(isRed));
+        sprite = new Sprite(buildTexture(isRed,x));
         //sprite.setOriginCenter(); //for rotation
         setSize(rand.nextInt(RANGE) + 1);
-        circleBound = new Circle(position.x + (sizeCurrent / 2), position.y + sizeCurrent / 2, sizeCurrent / 2);
+        circleBound = new Circle(position.x + ((float)sizeCurrent / 2f), position.y + (float)sizeCurrent / 2f, (float)sizeCurrent / 2f);
     }
 
-    public Texture buildTexture(boolean isRed) {
+    public Texture buildTexture(boolean isRed, float x) {
         Texture texture;
         if (isRed) {
             texture = new Texture("red.png");
-            position = new Vector2(REDSTARTX, 0);
+            position = new Vector2(x, 0);
         } else {
             texture = new Texture("blue.png");
-            position = new Vector2(BLUESTARTX, Atomsly.HEIGHT);
+            position = new Vector2(x, Atomsly.HEIGHT);
         }
         return texture;
     }
@@ -72,11 +72,12 @@ public class Atom {
         if ((scaleFactor <= 1)) {
             scaleFactor += dt; //collect dt
             sizeCurrent = Math.round(sizeFinal * scaleFactor); //increase bubble scale
-            circleBound.setRadius(sizeCurrent / 2);
         } else {
             position.add(velocity.x, velocity.y);
-            circleBound.set(position, sizeCurrent / 2);
         }
+        circleBound.set((position.x + (sizeCurrent/2f))/PlayState.X_SCALE_FACTOR,(position.y + (sizeCurrent/2f))/PlayState.Y_SCALE_FACTOR, sizeCurrent / 2f);
+        System.out.println(position);
+        System.out.println(circleBound);
         cornerCollision(); //detect collision after coordinates updated
         velocity.scl(1 / dt);
     }
@@ -107,8 +108,8 @@ public class Atom {
      *  the player's touch.
      */
     public void dragBubble(float x, float y, int pointer) {
-        position.x = PlayState.X_SCALE_FACTOR * x - (sizeCurrent / 2);
-        position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y) - (sizeCurrent / 2);
+        position.x = PlayState.X_SCALE_FACTOR * x - ((float)sizeCurrent / 2f);
+        position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y) - ((float)sizeCurrent / 2f);
         velocity.set(0, 0);
 //        velocity.set((Gdx.input.getDeltaX(pointer) / dt), (Gdx.input.getDeltaY(pointer) / dt));
 //        if (velocity.x >= 15 / dt) {
