@@ -1,6 +1,7 @@
 package com.oneoneone.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.oneoneone.game.states.GameStateManager;
 import com.oneoneone.game.states.MenuState;
 
-public class Atomsly extends ApplicationAdapter {
+public class Atomsly extends ApplicationAdapter{
 
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;

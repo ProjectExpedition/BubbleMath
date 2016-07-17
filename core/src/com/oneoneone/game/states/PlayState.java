@@ -9,9 +9,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.sprites.Atom;
-
 import java.util.Random;
-
+import com.badlogic.gdx.InputAdapter;
 /**
  * Created by David on 9/07/2016.
  */
@@ -25,7 +24,7 @@ public class PlayState extends State {
     private Texture background;
     private Texture redSpawner;
     private Texture blueSpawner;
-//    private Texture redSpawner2;
+    //    private Texture redSpawner2;
 //    private Texture blueSpawner2;
     private float timeKeeper = 0; //collects amount of time that has passed in game
     //private BitmapFont font;
@@ -35,6 +34,7 @@ public class PlayState extends State {
     private int goal;
     private int score = 0;
     private Random rand;
+    private boolean is_grabbed=false;
 
     /* PlayState(GameStateManager gsm) is called after Menu State
      * Allocates memory and calls constructors for all data members.
@@ -44,15 +44,17 @@ public class PlayState extends State {
         buildFont();
         buildTextures();
         buildAtoms();
-        rand=new Random();
-        goal=rand.nextInt(50);
+        rand = new Random();
+        goal = rand.nextInt(50);
     }
-    private void buildAtoms(){
+
+    private void buildAtoms() {
         redArray = new Array<Atom>();
         blueArray = new Array<Atom>();
         redArray.add(new Atom(true)); //creates first bubble
         blueArray.add(new Atom(false));
     }
+
     private void buildFont() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -61,7 +63,8 @@ public class PlayState extends State {
         font = generator.generateFont(parameter);
         generator.dispose(); //no longer needed
     }
-    private void buildTextures(){
+
+    private void buildTextures() {
         redSpawner = new Texture("spawn_red.png");
         blueSpawner = new Texture("spawn_blue.png");
 //        redSpawner2 = new Texture("red_spawner_2.png");
@@ -74,29 +77,67 @@ public class PlayState extends State {
     */
     @Override
     protected void handleInput() {
-        for (int i = 0; i <= 1; i++) {       //initializes to count maximum of two touch pointers
-            if (Gdx.input.isTouched(i)) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
-                for (Atom bub : redArray) {
-                    bub.grabBubble(i);
-                }
-                for (Atom bub : blueArray) {
-                    bub.grabBubble(i);
-                }
+        Gdx.input.setInputProcessor(new InputAdapter () {
+            @Override
+            public boolean touchDown (int x, int y, int pointer, int button) {
+
+//                for (int i = 0; i <= 1; i++) {       //initializes to count maximum of two touch pointers
+                    if (pointer < 2) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
+                        for (Atom bub : redArray) {
+                            bub.grabBubble(pointer);
+                        }
+                        for (Atom bub : blueArray) {
+                            bub.grabBubble(pointer);
+                        }
+                    }
+                //}
+                return true; // return true to indicate the event was handled
             }
-        }
+
+            @Override
+            public boolean touchUp (int x, int y, int pointer, int button) {
+                for (Atom bub:redArray){
+                    bub.releaseBubble();
+                }
+                for (Atom bub:blueArray){
+                    bub.releaseBubble();
+                }
+                return true; // return true to indicate the event was handled
+            }
+
+            @Override
+            public boolean touchDragged (int x, int y, int pointer){
+                if (pointer<2){
+                    for (Atom bub : redArray) {
+                        if (bub.is_grabbed==true&&bub.grabbed_by==pointer) {
+                            bub.dragBubble(x, y, pointer);
+                        }
+                    }
+                    for (Atom bub : blueArray) {
+                        if (bub.is_grabbed==true&&bub.grabbed_by==pointer) {
+                            bub.dragBubble(x, y, pointer);
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+
     }
-    private void doSpawn(){
-        if (timeKeeper > 10){ //if a certain number of poll times have passed spawn a bubble
+
+    private void doSpawn() {
+        if (timeKeeper > 10) { //if a certain number of poll times have passed spawn a bubble
             if (redArray.size < 5) {
                 redArray.add(new Atom(true));
             }
-            if (blueArray.size < 5){
+            if (blueArray.size < 5) {
                 blueArray.add(new Atom(false)); //spawns bubble
             }
             timeKeeper = 0;//resets sum poll time
         }
     }
-    private void annihilate(){
+
+    private void annihilate() {
         //        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
 //        Vector2 unitNormal = new Vector2();
 //        Vector2 unitTangent = new Vector2();
@@ -110,11 +151,12 @@ public class PlayState extends State {
 //        float iMass, kMass;
 //        int redOffset, blueOffset;
         boolean collision;
-        int blueMass,redMass;
+        int blueMass, redMass;
         for (int i = 0; i < redArray.size; i++) {
             for (int k = 0; k < blueArray.size; k++) {
-                try {collision = redArray.get(i).getCircleBound().overlaps((blueArray.get(k).getCircleBound()));}
-                catch (Exception iob){ //catch if index is out of bounds
+                try {
+                    collision = redArray.get(i).getCircleBound().overlaps((blueArray.get(k).getCircleBound()));
+                } catch (Exception iob) { //catch if index is out of bounds
                     break; //leave loop TODO not sure if this skips some collisions
                 }
                 if (collision) {
@@ -176,6 +218,7 @@ public class PlayState extends State {
             //calculates position changes to bubble
         }
     }
+
     /* update(float dt) is called in GameStateManager (see states.peek().update(dt))
     * updates the mathematics of everything that happens; velocity, coordinates, inputs,
     * checking,etc
@@ -187,11 +230,11 @@ public class PlayState extends State {
         doSpawn();
         annihilate();
         sum = 0; //reset sum
-        for(int i=0; i<redArray.size; i++){
+        for (int i = 0; i < redArray.size; i++) {
             redArray.get(i).update(dt);
             sum += redArray.get(i).getAtomicNumber();
         }
-        for(int i=0; i<blueArray.size; i++){
+        for (int i = 0; i < blueArray.size; i++) {
             blueArray.get(i).update(dt);
             sum += blueArray.get(i).getAtomicNumber();
         }
@@ -205,11 +248,11 @@ public class PlayState extends State {
         sb.begin();
         sb.draw(background, 0, 0);
         font.setColor(com.badlogic.gdx.graphics.Color.GRAY);
-        font.draw(sb, Integer.toString(sum), Atomsly.WIDTH/2 - FONT_SIZE/2, Atomsly.HEIGHT/2 +FONT_SIZE/2);
-        font.draw(sb, "GOAL: "+goal, Atomsly.WIDTH/2 - 4*FONT_SIZE/2, 3* Atomsly.HEIGHT/4 +FONT_SIZE/2);
-        font.draw(sb, Integer.toString(goal-sum), Atomsly.WIDTH/2 - FONT_SIZE/2, Atomsly.HEIGHT/4 +FONT_SIZE/2);
+        font.draw(sb, Integer.toString(sum), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 2 + FONT_SIZE / 2);
+        font.draw(sb, "GOAL: " + goal, Atomsly.WIDTH / 2 - 4 * FONT_SIZE / 2, 3 * Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
+        font.draw(sb, Integer.toString(goal - sum), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
         font.setColor(Color.WHITE);
-        font.draw(sb, Integer.toString(score), FONT_SIZE/2, Atomsly.HEIGHT - FONT_SIZE/2);
+        font.draw(sb, Integer.toString(score), FONT_SIZE / 2, Atomsly.HEIGHT - FONT_SIZE / 2);
         //sb.draw(goal, Atomsly.WIDTH/2 - (goal.getWidth()/2), Atomsly.HEIGHT/2 - (goal.getHeight()/2));
         //sb.draw(redSpawner2, Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         //sb.draw(blueSpawner2, 3 * Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
@@ -219,25 +262,29 @@ public class PlayState extends State {
 //            sb.draw(sprite, bub.getPosition().x, bub.getPosition().y, sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
             sb.draw(bub.getSprite(), bub.getPosition().x, bub.getPosition().y,
                     bub.getSizeCurrent(), bub.getSizeCurrent());
-            if (bub.getAtomicNumber() < 10){
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x+bub.getSizeCurrent()/2-FONT_SIZE/4, bub.getPosition().y+bub.getSizeCurrent()/2+FONT_SIZE/2);
-            } else { font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x+bub.getSizeCurrent()/2-FONT_SIZE/2, bub.getPosition().y+bub.getSizeCurrent()/2+FONT_SIZE/2);}
+            if (bub.getAtomicNumber() < 10) {
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 4, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
+            } else {
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 2, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
+            }
         }
         font.setColor(com.badlogic.gdx.graphics.Color.BLUE);
         for (Atom bub : blueArray) {
             sb.draw(bub.getSprite(), bub.getPosition().x, bub.getPosition().y,
                     bub.getSizeCurrent(), bub.getSizeCurrent());
-            if (bub.getAtomicNumber() < 10){
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x+bub.getSizeCurrent()/2-FONT_SIZE/4, bub.getPosition().y+bub.getSizeCurrent()/2+FONT_SIZE/2);
-            } else { font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x+bub.getSizeCurrent()/2-FONT_SIZE/2, bub.getPosition().y+bub.getSizeCurrent()/2+FONT_SIZE/2);}
+            if (bub.getAtomicNumber() < 10) {
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 4, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
+            } else {
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 2, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
+            }
         }
         sb.draw(redSpawner, 0, 0);
         sb.draw(blueSpawner, Atomsly.WIDTH - (blueSpawner.getWidth()), Atomsly.HEIGHT - blueSpawner.getHeight());
         sb.end();
-        if (sum==goal){
-            goal=rand.nextInt(50);
+        if (sum == goal) {
+            goal = rand.nextInt(50);
             score++;
-            if (score == 3){
+            if (score == 3) {
                 gsm.get(new MenuState(gsm));
                 dispose();
             }

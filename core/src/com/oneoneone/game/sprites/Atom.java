@@ -30,7 +30,8 @@ public class Atom {
     private Vector2 velocity;       //speed at which bubble moves
     private Vector2 position;       //position of bubble
     private Circle circleBound;     //collision detection representation of bubble
-
+    public boolean is_grabbed = false;
+    public int grabbed_by;
     /**
      * Atom() creates an instance of a bubble sprite for the array.
      * The colour is selected using a random Boolean isRed; true creates a
@@ -43,10 +44,11 @@ public class Atom {
         velocity = new Vector2(rand.nextInt(150), rand.nextInt(150));//set random velocity vector
         sprite = new Sprite(buildTexture(isRed));
         //sprite.setOriginCenter(); //for rotation
-        setSize(rand.nextInt(RANGE)+1);
+        setSize(rand.nextInt(RANGE) + 1);
         circleBound = new Circle(position.x + (sizeCurrent / 2), position.y + sizeCurrent / 2, sizeCurrent / 2);
     }
-    public Texture buildTexture(boolean isRed){
+
+    public Texture buildTexture(boolean isRed) {
         Texture texture;
         if (isRed) {
             texture = new Texture("red.png");
@@ -63,14 +65,14 @@ public class Atom {
         if (isRed) {
             velocity.add(-BUOYANCY, 0);
         } else {
-            velocity.add(BUOYANCY,0);
+            velocity.add(BUOYANCY, 0);
         }
         velocity.scl(dt);
         if ((scaleFactor <= 1)) {
             scaleFactor += dt; //collect dt
             sizeCurrent = Math.round(sizeFinal * scaleFactor); //increase bubble scale
             circleBound.setRadius(sizeCurrent / 2);
-        } else{
+        } else {
             position.add(velocity.x, velocity.y);
             circleBound.set(position, sizeCurrent / 2);
         }
@@ -85,47 +87,50 @@ public class Atom {
     /* grabBubble() is called on touch and directs bubbles within 50 units
      * towards the touch location.
      */
+
     public void grabBubble(int pointer) {
         //the following retrieve the x and y coordinates of the current touch.
-        float previous_x_touch = PlayState.X_SCALE_FACTOR * (Gdx.input.getDeltaX(pointer));
-        float previous_y_touch = PlayState.Y_SCALE_FACTOR * (Gdx.input.getDeltaY(pointer));
         x_touch_location = PlayState.X_SCALE_FACTOR * (Gdx.input.getX(pointer));
         y_touch_location = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - Gdx.input.getY(pointer));
-
         //the following creates a pair of variables to check the difference between
         //the bubble position and the touch location.
         float x_touch_difference = (position.x + sizeCurrent / 2) - x_touch_location;
         float y_touch_difference = (position.y + sizeCurrent / 2) - y_touch_location;
 
-            if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
-                position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
-                position.y = y_touch_location - (sizeCurrent / 2);//-y_touch_difference;
-                //velocity.x = 0;
-                //velocity.y = 0;
-                velocity.x = (previous_x_touch) / dt; //reset velocity
-                velocity.y = (previous_y_touch) / dt;
-                if (velocity.x >= 15 / dt) {
-                    velocity.x = 15f / dt;
-                }
-                if (velocity.y >= 15 / dt) {
-                    velocity.y = 15f / dt;
-                }
-                if (velocity.x <= -15 / dt) {
-                    velocity.x = -15f / dt;
-                }
-                if (velocity.y <= -15 / dt) {
-                    velocity.y = -15f / dt;
-                }
-                //Check to see if the bubbles are in range of the touch and if so
-                //direct them to the touch location.
+        if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
+            is_grabbed = true;
+            grabbed_by=pointer;
+        }
+    }
+/*            position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
+            position.y = y_touch_location - (sizeCurrent / 2);//-y_touch_difference;
+            //velocity.x = 0;
+            //velocity.y = 0;
+            velocity.x = (Gdx.input.getDeltaX(pointer)) / dt; //reset velocity
+            velocity.y = (Gdx.input.getDeltaY(pointer)) / dt;
+            if (velocity.x >= 15 / dt) {
+                velocity.x = 15f / dt;
+            }
+            if (velocity.y >= 15 / dt) {
+                velocity.y = 15f / dt;
+            }
+            if (velocity.x <= -15 / dt) {
+                velocity.x = -15f / dt;
+            }
+            if (velocity.y <= -15 / dt) {
+                velocity.y = -15f / dt;
+            }
+            //Check to see if the bubbles are in range of the touch and if so
+            //direct them to the touch location.
 //        if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
 //            setThrowVelocity(x_touch_difference, y_touch_difference);
-            }
         }
-    public void setThrowVelocity(float x, float y){
-        position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
-        position.y = y_touch_location - (sizeCurrent / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
-        velocity.set((x_touch_location - x) / dt,(y_touch_location - y) / dt);
+    }*/
+
+    public void dragBubble(float x, float y, int pointer) {
+        position.x = PlayState.X_SCALE_FACTOR *x - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
+        position.y = PlayState.Y_SCALE_FACTOR *(PlayState.SCREEN_HEIGHT -y) - (sizeCurrent / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
+        velocity.set((Gdx.input.getDeltaX(pointer) / dt), (Gdx.input.getDeltaY(pointer) / dt));
         if (velocity.x >= 15 / dt) {
             velocity.x = 15f / dt;
         }
@@ -140,22 +145,28 @@ public class Atom {
         }
 
     }
+    public void releaseBubble(){
+        is_grabbed=false;
+    }
+
     public Circle getCircleBound() {
         return circleBound;
     }
 
-    /** Work in progress; resizes surviving bubble after collision.
-     *  I want to implement a change in vector and velocity based
-     *  on the change in mass (i.e. dE=dMc^2->v=sqrt(2E/m), etc.
+    /**
+     * Work in progress; resizes surviving bubble after collision.
+     * I want to implement a change in vector and velocity based
+     * on the change in mass (i.e. dE=dMc^2->v=sqrt(2E/m), etc.
      */
-    public void setSize(int newMass){
+    public void setSize(int newMass) {
         //scaleFactor = -atomicNumber/newMass;
         atomicNumber = newMass;
-        sizeFinal = (int)Math.round(sprite.getWidth() * (0.4+(0.6* atomicNumber)/RANGE));
-        sizeFinal = sizeFinal*250/570; //ratio to get large atom (570) to normal atom (250)
+        sizeFinal = (int) Math.round(sprite.getWidth() * (0.4 + (0.6 * atomicNumber) / RANGE));
+        sizeFinal = sizeFinal * 250 / 570; //ratio to get large atom (570) to normal atom (250)
         sizeCurrent = sizeFinal;
-    //        velocity.set(newV);
+        //        velocity.set(newV);
     }
+
     public void cornerCollision() {
         if ((position.y < 0)) {
             position.y = 0;
