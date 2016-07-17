@@ -37,6 +37,7 @@ public class PlayState extends State {
     private int goal;
     private int score = 0;
     private Random rand;
+    public int grabLoop = 0;
 
     /* PlayState(GameStateManager gsm) is called after Menu State
      * Allocates memory and calls constructors for all data members.
@@ -85,12 +86,12 @@ public class PlayState extends State {
 
 //                for (int i = 0; i <= 1; i++) {       //initializes to count maximum of two touch pointers
                 if (pointer < 2) {//multitouch i is the pointer number where 0 is the first touch and 1 is the second
-                    for (Atom bub : redArray) {
-                        bub.grabBubble(pointer);
-                    }
-                    for (Atom bub : blueArray) {
-                        bub.grabBubble(pointer);
-                    }
+                        for (Atom bub : redArray) {
+                            bub.grabBubble(pointer);
+                        }
+                        for (Atom bub : blueArray) {
+                            bub.grabBubble(pointer);
+                        }
                 }
                 return true; // return true to indicate the event was handled
             }

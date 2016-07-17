@@ -85,8 +85,7 @@ public class Atom {
         return position;
     }
 
-    /* grabBubble() is called on touch and directs bubbles within 50 units
-     * towards the touch location.
+    /* grabBubble() is called on touch and allocates touched bubbles to a pointer
      */
 
     public void grabBubble(int pointer) {
@@ -103,34 +102,12 @@ public class Atom {
             grabbed_by = pointer;
         }
     }
-/*            position.x = x_touch_location - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
-            position.y = y_touch_location - (sizeCurrent / 2);//-y_touch_difference;
-            //velocity.x = 0;
-            //velocity.y = 0;
-            velocity.x = (Gdx.input.getDeltaX(pointer)) / dt; //reset velocity
-            velocity.y = (Gdx.input.getDeltaY(pointer)) / dt;
-            if (velocity.x >= 15 / dt) {
-                velocity.x = 15f / dt;
-            }
-            if (velocity.y >= 15 / dt) {
-                velocity.y = 15f / dt;
-            }
-            if (velocity.x <= -15 / dt) {
-                velocity.x = -15f / dt;
-            }
-            if (velocity.y <= -15 / dt) {
-                velocity.y = -15f / dt;
-            }
-            //Check to see if the bubbles are in range of the touch and if so
-            //direct them to the touch location.
-//        if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
-//            setThrowVelocity(x_touch_difference, y_touch_difference);
-        }
-    }*/
-
+    /* dragBubble is called when a drag even is detected and causes the attached bubble to follow
+     *  the player's touch.
+     */
     public void dragBubble(float x, float y, int pointer) {
-        position.x = PlayState.X_SCALE_FACTOR * x - (sizeCurrent / 2);//-x_touch_difference; //set bubble to position of touch
-        position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y) - (sizeCurrent / 2);//-y_touch_difference; //offset texture.getWidth()/2 to centre bubble on touch (TODO needs better centre method for scaling)
+        position.x = PlayState.X_SCALE_FACTOR * x - (sizeCurrent / 2);
+        position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y) - (sizeCurrent / 2);
         velocity.set((Gdx.input.getDeltaX(pointer) / dt), (Gdx.input.getDeltaY(pointer) / dt));
         if (velocity.x >= 15 / dt) {
             velocity.x = 15f / dt;
@@ -146,7 +123,8 @@ public class Atom {
         }
 
     }
-
+    /* releaseBubble releases the bubbles from grabbed state on touchUp.
+     */
     public void releaseBubble(int pointer) {
         if (grabbed_by == pointer) {
             is_grabbed = false;
