@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.sprites.Atom;
@@ -26,9 +25,9 @@ public class PlayState extends State {
     private static final int FONT_SIZE = 72;
     private int sumRed = 0;
     private int sumBlue = 0;
-    private float redPositionX;
-    private float bluePositionX;
-    private Texture field;
+    private float redBandX;
+    private float blueBandX;
+    private Texture band;
     private Texture background;
     private Texture redSpawner;
     private Texture blueSpawner;
@@ -55,15 +54,15 @@ public class PlayState extends State {
         buildTextures();
         buildAtoms();
         rand = new Random();
-        goal = rand.nextInt(50-10)+10;
+        goal = rand.nextInt(100-10)+10;
         //SR = new ShapeRenderer();
     }
 
     private void buildAtoms() {
         redArray = new Array<Atom>();
         blueArray = new Array<Atom>();
-        redArray.add(new Atom(true, redPositionX)); //creates first bubble
-        blueArray.add(new Atom(false, bluePositionX));
+        //redArray.add(new Atom(true, redBandX)); //creates first bubble
+        //blueArray.add(new Atom(false, blueBandX));
     }
 
     private void buildFont() {
@@ -78,7 +77,7 @@ public class PlayState extends State {
     private void buildTextures() {
         redSpawner = new Texture("spawn_red.png");
         blueSpawner = new Texture("spawn_blue.png");
-        field = new Texture("field.png");
+        band = new Texture("field.png");
 //        redSpawner2 = new Texture("red_spawner_2.png");
 //        blueSpawner2 = new Texture("blue_spawner_2.png");
         background = new Texture("bg.png");
@@ -135,12 +134,12 @@ public class PlayState extends State {
     }
 
     private void doSpawn() {
-        if (timeKeeper > 10) { //if a certain number of poll times have passed spawn a bubble
-            if (redArray.size < 5) {
-                redArray.add(new Atom(true, redPositionX));
+        if (timeKeeper > 1) { //if a certain number of poll times have passed spawn a bubble
+            if (redArray.size < 2) {
+                redArray.add(new Atom(true, redBandX));
             }
-            if (blueArray.size < 5) {
-                blueArray.add(new Atom(false, bluePositionX)); //spawns bubble
+            if (blueArray.size < 2) {
+                blueArray.add(new Atom(false, blueBandX)); //spawns bubble
             }
             timeKeeper = 0;//resets sum poll time
         }
@@ -241,21 +240,22 @@ public class PlayState extends State {
         sumRed = 0; //reset sum
         sumBlue = 0;
         for (int i = 0; i < redArray.size; i++) {
-            redArray.get(i).update(dt);
+            redArray.get(i).update(dt, redBandX);
             sumRed += redArray.get(i).getAtomicNumber();
         }
         for (int i = 0; i < blueArray.size; i++) {
-            blueArray.get(i).update(dt);
+            blueArray.get(i).update(dt, blueBandX);
             sumBlue += blueArray.get(i).getAtomicNumber();
         }
-        updateField();
+        updateField(dt);
     }
-    private void updateField(){
-        float Rprop = 1 - sumRed/(float)goal;
-        float Bprop = 1 + sumBlue/(float)goal;
-        float move = (Atomsly.WIDTH - field.getWidth())/2;
-        redPositionX = move * Rprop;
-        bluePositionX = move * Bprop;
+    private void updateField(float dt){
+        float Rprop = 1f - sumRed/(2f*(float)goal);
+        float Bprop = 1f + sumBlue/(2f*(float)goal);
+        float moveR = ((float)Atomsly.WIDTH - (float) band.getWidth())/2f;
+        float moveB = ((float)Atomsly.WIDTH - (float) band.getWidth())/2f;
+        redBandX = moveR * Rprop;
+        blueBandX = moveB * Bprop;
     }
 
     @Override
@@ -268,15 +268,15 @@ public class PlayState extends State {
         font.setColor(com.badlogic.gdx.graphics.Color.GRAY);
         font.draw(sb, Integer.toString(sumRed+sumBlue), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 2 + FONT_SIZE / 2);
         font.draw(sb, "GOAL: " + goal, Atomsly.WIDTH / 2 - 4 * FONT_SIZE / 2, 3 * Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
-        font.draw(sb, Integer.toString(goal - sumRed+sumBlue), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
+        font.draw(sb, Integer.toString(goal - (sumRed+sumBlue)), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
         font.setColor(Color.WHITE);
         font.draw(sb, Integer.toString(score), FONT_SIZE / 2, Atomsly.HEIGHT - FONT_SIZE / 2);
         //sb.draw(goal, Atomsly.WIDTH/2 - (goal.getWidth()/2), Atomsly.HEIGHT/2 - (goal.getHeight()/2));
         //sb.draw(redSpawner2, Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         //sb.draw(blueSpawner2, 3 * Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
         font.setColor(com.badlogic.gdx.graphics.Color.RED);
-        sb.draw(field, redPositionX, 0);
-        sb.draw(field, bluePositionX, 0);
+        sb.draw(band, redBandX, 0);
+        sb.draw(band, blueBandX, 0);
 
         for (Atom bub : redArray) {
 //            Sprite sprite = bub.getSprite();

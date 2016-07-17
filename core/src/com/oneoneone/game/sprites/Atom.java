@@ -42,7 +42,7 @@ public class Atom {
     public Atom(boolean isRed,float x) {
         this.isRed = isRed;
         Random rand = new Random();
-        velocity = new Vector2(rand.nextInt(150), rand.nextInt(150));//set random velocity vector
+        velocity = new Vector2(rand.nextInt(15), rand.nextInt(15));//set random velocity vector
         sprite = new Sprite(buildTexture(isRed,x));
         //sprite.setOriginCenter(); //for rotation
         setSize(rand.nextInt(RANGE) + 1);
@@ -61,12 +61,20 @@ public class Atom {
         return texture;
     }
 
-    public void update(float dt) { //dt = amount of time passed since last update
+    public void update(float dt, float fieldXLocation) { //dt = amount of time passed since last update
         this.dt = dt;
-        if ((isRed)&&(position.x >  )) {
-            velocity.add(-BUOYANCY, 0);
-        }        else {
-            velocity.add(BUOYANCY, 0);
+        float distance=0.01f*Math.abs(circleBound.x-(fieldXLocation));
+        float pos = circleBound.x;
+        if (distance > 0.01) {
+            if ((isRed) && (pos > (fieldXLocation))) { // on right
+                velocity.add((-distance), 0);
+            } else if ((isRed) && (pos < (fieldXLocation))) {
+                velocity.add((distance), 0);
+            } else if ((!isRed) && (pos < (fieldXLocation))) {
+                velocity.add((distance), 0);
+            } else if ((!isRed) && (pos > (fieldXLocation))) {//on right
+                velocity.add((-distance), 0);
+            }
         }
         velocity.scl(dt);
         if ((scaleFactor <= 1)) {
