@@ -63,9 +63,9 @@ public class Atom {
 
     public void update(float dt) { //dt = amount of time passed since last update
         this.dt = dt;
-        if (isRed) {
+        if ((isRed)&&(position.x >  )) {
             velocity.add(-BUOYANCY, 0);
-        } else {
+        }        else {
             velocity.add(BUOYANCY, 0);
         }
         velocity.scl(dt);
