@@ -119,5 +119,6 @@ idea {
         }
     }
 }
-dependencies {
-}
+//dependencies {
+//    compile 'com.badlogicgames.gdx:gdx-tools:1.9.3'
+//}
