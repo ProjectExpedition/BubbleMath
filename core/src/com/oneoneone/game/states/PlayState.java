@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.sprites.Atom;
@@ -42,7 +43,7 @@ public class PlayState extends State {
     private Random rand;
     public int grabLoop = 0;
     private float sumdt = 0;
-    //private ShapeRenderer SR;
+    private ShapeRenderer SR;
 
 
     public PlayState(GameStateManager gsm) {
@@ -55,7 +56,7 @@ public class PlayState extends State {
         buildObjects();
         rand = new Random();
         goal = rand.nextInt(100-10)+10;
-        //SR = new ShapeRenderer();
+        SR = new ShapeRenderer();
     }
 
     private void buildObjects() {
@@ -78,7 +79,7 @@ public class PlayState extends State {
         redSpawner = new Texture("RPipe.png");
         blueSpawner = new Texture("BPipe.png");
         redSpawner2 = new Texture("RHole.png");
-        blueSpawner2 = new Texture("BHole.png");
+        blueSpawner2 = new Texture("Bhole.png");
         background = new Texture("bg.png");
     }
 
@@ -316,15 +317,15 @@ public class PlayState extends State {
         }
         sb.draw(redSpawner, redEnergyBand.getPosition() - redSpawner.getWidth()/2, -70);
         sb.draw(blueSpawner, blueEnergyBand.getPosition() - blueSpawner.getWidth()/2, 70+Atomsly.HEIGHT - blueSpawner.getHeight());
-//        SR.setColor(Color.BLACK);
-//        SR.begin(ShapeRenderer.ShapeType.Line);
-//        for (Atom bub : redArray) {
-//            SR.circle(bub.getCircleBound().x,bub.getCircleBound().y,bub.getCircleBound().radius);
-//        }
-//        for (Atom bub : blueArray) {
-//            SR.circle(bub.getCircleBound().x,bub.getCircleBound().y,bub.getCircleBound().radius);
-//        }
-//        SR.end();
+        SR.setColor(Color.BLACK);
+        SR.begin(ShapeRenderer.ShapeType.Line);
+        for (Atom bub : redArray) {
+            SR.circle(bub.getCircleBound().x,bub.getCircleBound().y,bub.getCircleBound().radius);
+        }
+        for (Atom bub : blueArray) {
+            SR.circle(bub.getCircleBound().x,bub.getCircleBound().y,bub.getCircleBound().radius);
+        }
+        SR.end();
         sb.end();
         if (sumRed+sumBlue == goal) {
             goal = rand.nextInt(50-10)+10;

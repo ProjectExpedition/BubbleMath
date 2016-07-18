@@ -64,21 +64,31 @@ public class Atom {
         return texture;
     }
 
-    public void update(float dt, float fieldXLocation) { //dt = amount of time passed since last update
+    public void update(float dt, float xMoveTo) { //dt = amount of time passed since last update
         this.dt = dt;
-        float distance=0.01f*Math.abs(circleBound.x-(fieldXLocation) - circleBound.radius);
-        float pos = circleBound.x - circleBound.radius; //TODO fix this
-        if (distance > 0.01) {
-            if ((isRed) && (pos > (fieldXLocation))) { // on right
-                velocity.add((-distance), 0);
-            } else if ((isRed) && (pos < (fieldXLocation))) {
-                velocity.add((distance), 0);
-            } else if ((!isRed) && (pos < (fieldXLocation))) {
-                velocity.add((distance), 0);
-            } else if ((!isRed) && (pos > (fieldXLocation))) {//on right
-                velocity.add((-distance), 0);
-            }
+        float distance = (xMoveTo) - circleBound.x*PlayState.X_SCALE_FACTOR + 30;
+        //float distance=0.01f*Math.abs(circleBound.x-(xMoveTo) - circleBound.radius);
+        //float pos = circleBound.x - circleBound.radius; //TODO fix this
+
+        if (distance > 0) {
+            velocity.add(distance/30, 0);
+        } else if (distance < 0) {
+            velocity.add(distance/30, 0);
+        } else {
+            velocity.set(0, 0);
         }
+//
+//        if (distance > 0.01) {
+//            if ((isRed) && (pos > (xMoveTo))) { // on right
+//                velocity.add((-distance), 0);
+//            } else if ((isRed) && (pos < (xMoveTo))) {
+//                velocity.add((distance), 0);
+//            } else if ((!isRed) && (pos < (xMoveTo))) {
+//                velocity.add((distance), 0);
+//            } else if ((!isRed) && (pos > (xMoveTo))) {//on right
+//                velocity.add((-distance), 0);
+//            }
+//        }
         velocity.scl(dt);
         if ((scaleFactor <= 1)) {
             scaleFactor += dt/2; //collect dt
