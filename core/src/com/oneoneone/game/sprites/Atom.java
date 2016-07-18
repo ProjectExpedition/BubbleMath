@@ -33,7 +33,7 @@ public class Atom {
     private Circle circleBound;     //collision detection representation of bubble
     public boolean is_grabbed = false;
     public int grabbed_by;
-    private Array<Texture> shells;
+    private Array<Sprite> shells;
 
     public Atom(boolean isRed,float x) {
         /**
@@ -46,10 +46,15 @@ public class Atom {
         Random rand = new Random();
         velocity = new Vector2((rand.nextInt(2*15)-15), (rand.nextInt(40)+80));//set random velocity vector
         sprite = new Sprite(buildTexture(isRed,x));
-        sprite.setOriginCenter(); //for rotation
         setSize(rand.nextInt(RANGE) + 1);
-        //shells = new Array<Texture()>;
-        circleBound = new Circle(position.x, position.y , (float)sizeCurrent / 2f);
+
+        int i = 0;
+//        shells = new Array<Sprite>();
+//        while (i <= atomicNumber){
+//            shells.add(sprite);
+//        }
+        sprite.setOriginCenter(); //for rotation
+        circleBound = new Circle(position.x/PlayState.X_SCALE_FACTOR, position.y/PlayState.X_SCALE_FACTOR, (float)sizeCurrent / 2f);
     }
 
     public Texture buildTexture(boolean isRed, float x) {
@@ -67,9 +72,6 @@ public class Atom {
     public void update(float dt, float xMoveTo) { //dt = amount of time passed since last update
         this.dt = dt;
         float distance = (xMoveTo) - circleBound.x*PlayState.X_SCALE_FACTOR + 30; //30*2 = sze of beam
-        //float distance=0.01f*Math.abs(circleBound.x-(xMoveTo) - circleBound.radius);
-        //float pos = circleBound.x - circleBound.radius;
-
         if (distance > 0) {
             velocity.add(distance/30, 0);
         } else if (distance < 0) {
@@ -77,18 +79,6 @@ public class Atom {
         } else {
             velocity.set(0, 0);
         }
-//
-//        if (distance > 0.01) {
-//            if ((isRed) && (pos > (xMoveTo))) { // on right
-//                velocity.add((-distance), 0);
-//            } else if ((isRed) && (pos < (xMoveTo))) {
-//                velocity.add((distance), 0);
-//            } else if ((!isRed) && (pos < (xMoveTo))) {
-//                velocity.add((distance), 0);
-//            } else if ((!isRed) && (pos > (xMoveTo))) {//on right
-//                velocity.add((-distance), 0);
-//            }
-//        }
         velocity.scl(dt);
         if ((scaleFactor <= 1)) {
             sizeCurrent = Math.round(sizeFinal * scaleFactor); //increase bubble scale
@@ -164,7 +154,7 @@ public class Atom {
         atomicNumber = newMass;
         sizeFinal = (int) Math.round(sprite.getWidth() * (0.4 + (0.6 * atomicNumber) / RANGE));
         sizeFinal = sizeFinal * 250 / 570; //ratio to get large atom (570) to normal atom (250)
-        sizeCurrent = sizeFinal;
+        //sizeCurrent = sizeFinal;
     }
 
     public void cornerCollision() {
