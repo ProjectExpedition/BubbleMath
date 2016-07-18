@@ -15,6 +15,7 @@ import java.util.Random;
 import com.badlogic.gdx.InputAdapter;
 import com.oneoneone.game.sprites.EnergyBand;
 import com.oneoneone.game.sprites.Explosions;
+import com.oneoneone.game.sprites.FieldEmitters;
 
 /**
  * Created by David on 9/07/2016.
@@ -38,6 +39,8 @@ public class PlayState extends State {
     private Array<Explosions> explosions;
     private EnergyBand redEnergyBand;
     private EnergyBand blueEnergyBand;
+    private FieldEmitters redField;
+    private FieldEmitters blueField;
     private BitmapFont font;
     private int goal;
     private int score = 0;
@@ -66,6 +69,8 @@ public class PlayState extends State {
 
         redEnergyBand = new EnergyBand((Atomsly.WIDTH / 2) - 30);
         blueEnergyBand = new EnergyBand((Atomsly.WIDTH / 2) + 30);
+        redField = new FieldEmitters(redEnergyBand.getPosition(),true);
+        blueField = new FieldEmitters(blueEnergyBand.getPosition(),false);
     }
 
     private void buildFont() {
@@ -247,8 +252,10 @@ public class PlayState extends State {
         updateField(dt);
         redEnergyBand.update(dt);
         blueEnergyBand.update(dt);
-        for(int i=0;i<explosions.size;i++){
-            if(explosions.get(i).isComplete()){
+        redField.update(dt);
+        blueField.update(dt);
+        for (int i = 0; i < explosions.size; i++) {
+            if (explosions.get(i).isComplete()) {
                 explosions.removeIndex(i);
             }
         }
@@ -281,6 +288,8 @@ public class PlayState extends State {
         float Bprop = 1f + sumBlue / ((4f - constraint) * (float) goal);
         redEnergyBand.setPosition((((float) Atomsly.WIDTH - 200) / 2f) * Rprop);
         blueEnergyBand.setPosition((((float) Atomsly.WIDTH + 200) / 2f) * Bprop);
+        redField.setPosition(redEnergyBand.getPosition());
+        blueField.setPosition(blueEnergyBand.getPosition());
         //redEnergyBandMoveToPosition = (((float)Atomsly.WIDTH-200)/2f) * Rprop;
         //blueEnergyBandMoveToPosition = (((float)Atomsly.WIDTH+200)/2f) * Bprop;
     }
@@ -335,6 +344,8 @@ public class PlayState extends State {
         }
         sb.draw(redSpawner, redEnergyBand.getPosition() - redSpawner.getWidth() / 2, -70);
         sb.draw(blueSpawner, blueEnergyBand.getPosition() - blueSpawner.getWidth() / 2, 70 + Atomsly.HEIGHT - blueSpawner.getHeight());
+        redField.draw(sb);
+        blueField.draw(sb);
 //        SR.setColor(Color.BLACK);
 //        SR.begin(ShapeRenderer.ShapeType.Line);
 //        for (Atom bub : redArray) {
