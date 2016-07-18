@@ -26,17 +26,11 @@ public class PlayState extends State {
     private static final int FONT_SIZE = 72;
     private int sumRed = 0;
     private int sumBlue = 0;
-    private float redBandX;
-    private float blueBandX;
-    private Texture blueBand;
-    private Texture redBand;
     private Texture background;
     private Texture redSpawner;
     private Texture blueSpawner;
     private Texture redSpawner2;
     private Texture blueSpawner2;
-    //    private Texture redSpawner2;
-//    private Texture blueSpawner2;
     private float timeKeeper = 0; //collects amount of time that has passed in game
     private Array<Atom> redArray; //Array Container of all bubbles
     private Array<Atom> blueArray;
@@ -58,19 +52,17 @@ public class PlayState extends State {
         super(gsm); //super = active state class
         buildFont();
         buildTextures();
-        buildAtoms();
-        redEnergyBand = new EnergyBand((Atomsly.WIDTH/2) - 1);
-        blueEnergyBand = new EnergyBand((Atomsly.WIDTH/2) + 1);
+        buildObjects();
         rand = new Random();
         goal = rand.nextInt(100-10)+10;
         //SR = new ShapeRenderer();
     }
 
-    private void buildAtoms() {
+    private void buildObjects() {
         redArray = new Array<Atom>();
         blueArray = new Array<Atom>();
-        //redArray.add(new Atom(true, redBandX)); //creates first bubble
-        //blueArray.add(new Atom(false, blueBandX));
+        redEnergyBand = new EnergyBand((Atomsly.WIDTH/2) - 30);
+        blueEnergyBand = new EnergyBand((Atomsly.WIDTH/2) + 30);
     }
 
     private void buildFont() {
@@ -85,8 +77,6 @@ public class PlayState extends State {
     private void buildTextures() {
         redSpawner = new Texture("RPipe.png");
         blueSpawner = new Texture("BPipe.png");
-        redBand = new Texture("red_field.png");
-        blueBand = new Texture("blue_field.png");
         redSpawner2 = new Texture("RHole.png");
         blueSpawner2 = new Texture("BHole.png");
         background = new Texture("bg.png");
@@ -143,12 +133,12 @@ public class PlayState extends State {
     }
 
     private void doSpawn() {
-        if (timeKeeper > 8) { //if a certain number of poll times have passed spawn a bubble
+        if ((timeKeeper > 8) || (redArray.size + blueArray.size == 0)&&(timeKeeper>1)) { //if a certain number of poll times have passed spawn a bubble
             //if (redArray.size < 3) {
-                redArray.add(new Atom(true, redBandX));
+                redArray.add(new Atom(true, redEnergyBand.getPosition()));
             //}
             //if (blueArray.size < 3) {
-                blueArray.add(new Atom(false, blueBandX)); //spawns bubble
+                blueArray.add(new Atom(false, blueEnergyBand.getPosition())); //spawns bubble
             //}
             timeKeeper = 0;//resets sum poll time
         }
@@ -196,43 +186,43 @@ public class PlayState extends State {
                         k = k - 1;
                     }
                 }
-                        /*normal.set(bubbles.get(i).getPosition());
-                        normal.sub(bubbles.get(k).getPosition());
-                        unitNormal.set(normal);
-                        unitNormal.nor();
-                        unitTangent.set(-unitNormal.y,unitNormal.x);
-                        iVelocity.set(bubbles.get(i).getVelocity());
-                        kVelocity.set(bubbles.get(k).getVelocity());
-                        iVelocity_projection_normal=unitNormal.dot(iVelocity);
-                        //iVelocity_projection_normal.dot(iVelocity);
-                        kVelocity_projection_normal.set(unitNormal);
-                        kVelocity_projection_normal.dot(kVelocity);
-                        iVelocity_projection_tangent.set(unitTangent);
-                        iVelocity_projection_tangent.dot(iVelocity);
-                        kVelocity_projection_tangent.set(unitTangent);
-                        kVelocity_projection_tangent.dot(kVelocity);
-                        iMass = (bubbles.get(i).getSizeCurrent())/100f;
-                        kMass = (bubbles.get(k).getSizeCurrent())/100f;
-                        newiVelocity=iVelocity_projection_normal*(iMass-kMass);
-                        newiVelocity.add(kVelocity_projection_normal.scl(2*kMass));
-                        newiVelocity.scl(1/(iMass+kMass));
-                        Vector2 newkVelocity=new Vector2();
-                        newkVelocity.set(kVelocity_projection_normal);
-                        newkVelocity.scl(kMass-iMass);
-                        newkVelocity.add(iVelocity_projection_normal.scl(2*iMass));
-                        newkVelocity.scl(1/(iMass+kMass));
-                        newiVelocity.dot(unitNormal);
-                        newkVelocity.dot(unitNormal);
-                        iVelocity_projection_tangent.dot(unitTangent);
-                        kVelocity_projection_tangent.dot(unitTangent);
-                        newiVelocity.add(iVelocity_projection_tangent);
-                        newkVelocity.add(kVelocity_projection_tangent);
-                        bubbles.get(i).postCollisionVelocity(newiVelocity);
-                        bubbles.get(k).postCollisionVelocity(newkVelocity);
-                        bubbles.removeIndex(i);
-                        bubbles.removeIndex(k);*/
+                /*collision detection stuff is here*/
+//                        normal.set(bubbles.get(i).getPosition());
+//                        normal.sub(bubbles.get(k).getPosition());
+//                        unitNormal.set(normal);
+//                        unitNormal.nor();
+//                        unitTangent.set(-unitNormal.y,unitNormal.x);
+//                        iVelocity.set(bubbles.get(i).getVelocity());
+//                        kVelocity.set(bubbles.get(k).getVelocity());
+//                        iVelocity_projection_normal=unitNormal.dot(iVelocity);
+//                        //iVelocity_projection_normal.dot(iVelocity);
+//                        kVelocity_projection_normal.set(unitNormal);
+//                        kVelocity_projection_normal.dot(kVelocity);
+//                        iVelocity_projection_tangent.set(unitTangent);
+//                        iVelocity_projection_tangent.dot(iVelocity);
+//                        kVelocity_projection_tangent.set(unitTangent);
+//                        kVelocity_projection_tangent.dot(kVelocity);
+//                        iMass = (bubbles.get(i).getSizeCurrent())/100f;
+//                        kMass = (bubbles.get(k).getSizeCurrent())/100f;
+//                        newiVelocity=iVelocity_projection_normal*(iMass-kMass);
+//                        newiVelocity.add(kVelocity_projection_normal.scl(2*kMass));
+//                        newiVelocity.scl(1/(iMass+kMass));
+//                        Vector2 newkVelocity=new Vector2();
+//                        newkVelocity.set(kVelocity_projection_normal);
+//                        newkVelocity.scl(kMass-iMass);
+//                        newkVelocity.add(iVelocity_projection_normal.scl(2*iMass));
+//                        newkVelocity.scl(1/(iMass+kMass));
+//                        newiVelocity.dot(unitNormal);
+//                        newkVelocity.dot(unitNormal);
+//                        iVelocity_projection_tangent.dot(unitTangent);
+//                        kVelocity_projection_tangent.dot(unitTangent);
+//                        newiVelocity.add(iVelocity_projection_tangent);
+//                        newkVelocity.add(kVelocity_projection_tangent);
+//                        bubbles.get(i).postCollisionVelocity(newiVelocity);
+//                        bubbles.get(k).postCollisionVelocity(newkVelocity);
+//                        bubbles.removeIndex(i);
+//                        bubbles.removeIndex(k);
             }
-            //calculates position changes to bubble
         }
     }
 
@@ -246,17 +236,10 @@ public class PlayState extends State {
         timeKeeper += dt; //sums poll time
         doSpawn();
         annihilate();
-        sumRed = 0; //reset sum
-        sumBlue = 0;
-        for (int i = 0; i < redArray.size; i++) {
-            sumRed += redArray.get(i).getAtomicNumber();
-        }
-        for (int i = 0; i < blueArray.size; i++) {
-            sumBlue += blueArray.get(i).getAtomicNumber();
-        }
+        findSum();
         updateField(dt);
-        redEnergyBand.update(dt, redBandX);
-        blueEnergyBand.update(dt, blueBandX);
+        redEnergyBand.update(dt);
+        blueEnergyBand.update(dt);
         for (int i = 0; i < redArray.size; i++) {
             redArray.get(i).update(dt, redEnergyBand.getPosition());
         }
@@ -264,13 +247,25 @@ public class PlayState extends State {
             blueArray.get(i).update(dt, blueEnergyBand.getPosition());
         }
     }
+    private void findSum(){
+        sumRed = 0; //reset sum
+        for (int i = 0; i < redArray.size; i++) {
+            sumRed += redArray.get(i).getAtomicNumber();
+        }
+        sumBlue = 0;
+        for (int i = 0; i < blueArray.size; i++) {
+            sumBlue += blueArray.get(i).getAtomicNumber();
+        }
+    }
     private void updateField(float dt){
         sumdt += dt;
         float constraint = sumdt / 100;
         float Rprop = 1f - sumRed/((4f-constraint)*(float)goal);
         float Bprop = 1f + sumBlue/((4f-constraint)*(float)goal);
-        redBandX = (((float)Atomsly.WIDTH-200)/2f) * Rprop;
-        blueBandX = (((float)Atomsly.WIDTH+200)/2f) * Bprop;
+        redEnergyBand.setPosition((((float)Atomsly.WIDTH-200)/2f) * Rprop);
+        blueEnergyBand.setPosition((((float)Atomsly.WIDTH+200)/2f) * Bprop);
+        //redEnergyBandMoveToPosition = (((float)Atomsly.WIDTH-200)/2f) * Rprop;
+        //blueEnergyBandMoveToPosition = (((float)Atomsly.WIDTH+200)/2f) * Bprop;
     }
 
     @Override
@@ -278,6 +273,10 @@ public class PlayState extends State {
         /* render(float dt) draws all sprites to SpriteBatch declared in Atomsly
         * draws after all positions and conditions have been calculated in update in Atomsly render
         */
+        if ((score == 1) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)){
+            gsm.get(new MenuState(gsm));
+            dispose();
+        }
         sb.begin();
         sb.draw(background, 0, 0);
         font.setColor(com.badlogic.gdx.graphics.Color.GRAY);
@@ -291,8 +290,8 @@ public class PlayState extends State {
         sb.draw(redSpawner2, redEnergyBand.getPosition() - redSpawner2.getWidth()/2, -70);
         sb.draw(blueSpawner2, blueEnergyBand.getPosition() - blueSpawner2.getWidth()/2, 70+Atomsly.HEIGHT - blueSpawner.getHeight());
 
-        sb.draw(redEnergyBand.getTexture(), redEnergyBand.getPosition() - redEnergyBand.getTexture().getWidth()/2, 0);//redBandX - (float) redBand.getWidth()/2f, 0);
-        sb.draw(blueEnergyBand.getTexture(), blueEnergyBand.getPosition() - blueEnergyBand.getTexture().getWidth()/2, 0); //blueBandX - (float) blueBand.getWidth()/2f, 0);
+        sb.draw(redEnergyBand.getTexture(), redEnergyBand.getPosition() - redEnergyBand.getTexture().getWidth()/2, 0);//redEnergyBandMoveToPosition - (float) redBand.getWidth()/2f, 0);
+        sb.draw(blueEnergyBand.getTexture(), blueEnergyBand.getPosition() - blueEnergyBand.getTexture().getWidth()/2, 0); //blueEnergyBandMoveToPosition - (float) blueBand.getWidth()/2f, 0);
 
         for (Atom bub : redArray) {
 //            Sprite sprite = bub.getSprite();
