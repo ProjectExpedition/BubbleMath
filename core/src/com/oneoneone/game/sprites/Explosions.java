@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Created by Rod on 18/07/2016.
  */
-public class Particles {
+public class Explosions {
     private static final String bsplosion="bsplosion.particle";
     private static final String rsplosion="rsplosion.particle";
     private static final String rbsplosion="rbsplosion.particle";
@@ -16,7 +16,7 @@ public class Particles {
     private Vector2 emitterPosition;
     private ParticleEffect peg;
 
-    public Particles(Vector2 pos, boolean isRed){
+    public Explosions(Vector2 pos, boolean isRed){
         emitterPosition=pos;
         if(isRed){
             emitter=rsplosion;
