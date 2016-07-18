@@ -315,9 +315,10 @@ public class PlayState extends State {
         font.setColor(com.badlogic.gdx.graphics.Color.RED);
         sb.draw(redSpawner2, redEnergyBand.getPosition() - redSpawner2.getWidth() / 2, -70);
         sb.draw(blueSpawner2, blueEnergyBand.getPosition() - blueSpawner2.getWidth() / 2, 70 + Atomsly.HEIGHT - blueSpawner.getHeight());
-
-        sb.draw(redEnergyBand.getTexture(), redEnergyBand.getPosition() - redEnergyBand.getTexture().getWidth() / 2, 0);//redEnergyBandMoveToPosition - (float) redBand.getWidth()/2f, 0);
-        sb.draw(blueEnergyBand.getTexture(), blueEnergyBand.getPosition() - blueEnergyBand.getTexture().getWidth() / 2, 0); //blueEnergyBandMoveToPosition - (float) blueBand.getWidth()/2f, 0);
+        redField.draw(sb);
+        blueField.draw(sb);
+//        sb.draw(redEnergyBand.getTexture(), redEnergyBand.getPosition() - redEnergyBand.getTexture().getWidth() / 2, 0);//redEnergyBandMoveToPosition - (float) redBand.getWidth()/2f, 0);
+//        sb.draw(blueEnergyBand.getTexture(), blueEnergyBand.getPosition() - blueEnergyBand.getTexture().getWidth() / 2, 0); //blueEnergyBandMoveToPosition - (float) blueBand.getWidth()/2f, 0);
 
         for (Atom bub : redArray) {
 //            Sprite sprite = bub.getSprite();
@@ -344,8 +345,7 @@ public class PlayState extends State {
         }
         sb.draw(redSpawner, redEnergyBand.getPosition() - redSpawner.getWidth() / 2, -70);
         sb.draw(blueSpawner, blueEnergyBand.getPosition() - blueSpawner.getWidth() / 2, 70 + Atomsly.HEIGHT - blueSpawner.getHeight());
-        redField.draw(sb);
-        blueField.draw(sb);
+
 //        SR.setColor(Color.BLACK);
 //        SR.begin(ShapeRenderer.ShapeType.Line);
 //        for (Atom bub : redArray) {

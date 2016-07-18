@@ -17,10 +17,10 @@ public class FieldEmitters {
     public FieldEmitters(float posX, boolean isRed) {
         if(isRed){
             fieldColor=rfield;
-            posY=0;
+            posY=35;
         }else{
             fieldColor=bfield;
-            posY= Atomsly.HEIGHT;
+            posY= Atomsly.HEIGHT-35;
         }
         peg = new ParticleEffect();
         peg.load(Gdx.files.internal(fieldColor), Gdx.files.internal(""));
