@@ -296,22 +296,24 @@ public class PlayState extends State {
         for (Atom bub : redArray) {
 //            Sprite sprite = bub.getSprite();
 //            sb.draw(sprite, bub.getPosition().x, bub.getPosition().y, sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
-            sb.draw(bub.getSprite(), bub.getPosition().x, bub.getPosition().y,
+            sb.draw(bub.getSprite(), bub.getPosition().x - bub.getSizeCurrent()/2, bub.getPosition().y - bub.getSizeCurrent()/2,
                     bub.getSizeCurrent(), bub.getSizeCurrent());
+
             if (bub.getAtomicNumber() < 10) {
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 4, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x - FONT_SIZE / 4, bub.getPosition().y + FONT_SIZE / 2);
             } else {
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 2, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x - FONT_SIZE / 2, bub.getPosition().y + FONT_SIZE / 2);
             }
         }
         font.setColor(com.badlogic.gdx.graphics.Color.BLUE);
         for (Atom bub : blueArray) {
-            sb.draw(bub.getSprite(), bub.getPosition().x, bub.getPosition().y,
+            sb.draw(bub.getSprite(), bub.getPosition().x - bub.getSizeCurrent()/2, bub.getPosition().y - bub.getSizeCurrent()/2,
                     bub.getSizeCurrent(), bub.getSizeCurrent());
+
             if (bub.getAtomicNumber() < 10) {
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 4, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x - FONT_SIZE / 4, bub.getPosition().y + FONT_SIZE / 2);
             } else {
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 2, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x - FONT_SIZE / 2, bub.getPosition().y + FONT_SIZE / 2);
             }
         }
         sb.draw(redSpawner, redEnergyBand.getPosition() - redSpawner.getWidth()/2, -70);
