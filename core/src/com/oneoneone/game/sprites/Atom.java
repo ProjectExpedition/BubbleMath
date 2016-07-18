@@ -154,7 +154,7 @@ public class Atom {
         atomicNumber = newMass;
         sizeFinal = (int) Math.round(sprite.getWidth() * (0.4 + (0.6 * atomicNumber) / RANGE));
         sizeFinal = sizeFinal * 250 / 570; //ratio to get large atom (570) to normal atom (250)
-        //sizeCurrent = sizeFinal;
+        sizeCurrent = sizeFinal;
     }
 
     public void cornerCollision() {
