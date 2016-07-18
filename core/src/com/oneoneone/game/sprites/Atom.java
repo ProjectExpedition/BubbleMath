@@ -15,7 +15,7 @@ import java.util.Random;
  * Created by David on 9/07/2016.
  */
 public class Atom {
-    private static final int RANGE = 30;            //number of atoms
+    private static final int RANGE = 20;            //number of atoms
     private static final int BLUESTARTX = 1280;     //starting x coordinate for blue
     private static final int REDSTARTX = 0;         //starting x coordinate for red
     private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
@@ -64,30 +64,38 @@ public class Atom {
         return texture;
     }
 
-    public void update(float dt, float fieldXLocation) { //dt = amount of time passed since last update
+    public void update(float dt, float xMoveTo) { //dt = amount of time passed since last update
         this.dt = dt;
-        float distance=0.01f*Math.abs(circleBound.x-(fieldXLocation) - circleBound.radius);
-        float pos = circleBound.x - circleBound.radius; //TODO fix this
-        if (distance > 0.01) {
-            if ((isRed) && (pos > (fieldXLocation))) { // on right
-                velocity.add((-distance), 0);
-            } else if ((isRed) && (pos < (fieldXLocation))) {
-                velocity.add((distance), 0);
-            } else if ((!isRed) && (pos < (fieldXLocation))) {
-                velocity.add((distance), 0);
-            } else if ((!isRed) && (pos > (fieldXLocation))) {//on right
-                velocity.add((-distance), 0);
-            }
+        float distance = (xMoveTo) - circleBound.x*PlayState.X_SCALE_FACTOR + 30;
+        //float distance=0.01f*Math.abs(circleBound.x-(xMoveTo) - circleBound.radius);
+        //float pos = circleBound.x - circleBound.radius;
+
+        if (distance > 0) {
+            velocity.add(distance/30, 0);
+        } else if (distance < 0) {
+            velocity.add(distance/30, 0);
+        } else {
+            velocity.set(0, 0);
         }
+//
+//        if (distance > 0.01) {
+//            if ((isRed) && (pos > (xMoveTo))) { // on right
+//                velocity.add((-distance), 0);
+//            } else if ((isRed) && (pos < (xMoveTo))) {
+//                velocity.add((distance), 0);
+//            } else if ((!isRed) && (pos < (xMoveTo))) {
+//                velocity.add((distance), 0);
+//            } else if ((!isRed) && (pos > (xMoveTo))) {//on right
+//                velocity.add((-distance), 0);
+//            }
+//        }
         velocity.scl(dt);
         if ((scaleFactor <= 1)) {
-            scaleFactor += dt/2; //collect dt
             sizeCurrent = Math.round(sizeFinal * scaleFactor); //increase bubble scale
+            scaleFactor += dt/2; //collect dt
         }
         position.add(velocity.x, velocity.y);
-        circleBound.set((position.x + (sizeCurrent/2f))/PlayState.X_SCALE_FACTOR,(position.y + (sizeCurrent/2f))/PlayState.Y_SCALE_FACTOR, sizeCurrent / 2f);
-        System.out.println(position);
-        System.out.println(circleBound);
+        circleBound.set((position.x + (sizeCurrent/2f))/PlayState.X_SCALE_FACTOR,(position.y + (sizeCurrent/2f))/PlayState.Y_SCALE_FACTOR, sizeCurrent/PlayState.X_SCALE_FACTOR / 2f);
         cornerCollision(); //detect collision after coordinates updated
         velocity.scl(1 / dt);
     }
