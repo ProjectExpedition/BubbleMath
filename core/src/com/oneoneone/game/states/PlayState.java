@@ -13,6 +13,7 @@ import com.oneoneone.game.sprites.Atom;
 import java.util.Random;
 
 import com.badlogic.gdx.InputAdapter;
+import com.oneoneone.game.sprites.EnergyBand;
 
 /**
  * Created by David on 9/07/2016.
@@ -27,21 +28,26 @@ public class PlayState extends State {
     private int sumBlue = 0;
     private float redBandX;
     private float blueBandX;
-    private Texture band;
+    private Texture blueBand;
+    private Texture redBand;
     private Texture background;
     private Texture redSpawner;
     private Texture blueSpawner;
+    private Texture redSpawner2;
+    private Texture blueSpawner2;
     //    private Texture redSpawner2;
 //    private Texture blueSpawner2;
     private float timeKeeper = 0; //collects amount of time that has passed in game
-    //private BitmapFont font;
     private Array<Atom> redArray; //Array Container of all bubbles
     private Array<Atom> blueArray;
+    private EnergyBand redEnergyBand;
+    private EnergyBand blueEnergyBand;
     private BitmapFont font;
     private int goal;
     private int score = 0;
     private Random rand;
     public int grabLoop = 0;
+    private float sumdt = 0;
     //private ShapeRenderer SR;
 
 
@@ -53,6 +59,8 @@ public class PlayState extends State {
         buildFont();
         buildTextures();
         buildAtoms();
+        redEnergyBand = new EnergyBand((Atomsly.WIDTH/2) - 1);
+        blueEnergyBand = new EnergyBand((Atomsly.WIDTH/2) + 1);
         rand = new Random();
         goal = rand.nextInt(100-10)+10;
         //SR = new ShapeRenderer();
@@ -75,11 +83,12 @@ public class PlayState extends State {
     }
 
     private void buildTextures() {
-        redSpawner = new Texture("spawn_red.png");
-        blueSpawner = new Texture("spawn_blue.png");
-        band = new Texture("field.png");
-//        redSpawner2 = new Texture("red_spawner_2.png");
-//        blueSpawner2 = new Texture("blue_spawner_2.png");
+        redSpawner = new Texture("RPipe.png");
+        blueSpawner = new Texture("BPipe.png");
+        redBand = new Texture("red_field.png");
+        blueBand = new Texture("blue_field.png");
+        redSpawner2 = new Texture("RHole.png");
+        blueSpawner2 = new Texture("BHole.png");
         background = new Texture("bg.png");
     }
 
@@ -134,13 +143,13 @@ public class PlayState extends State {
     }
 
     private void doSpawn() {
-        if (timeKeeper > 1) { //if a certain number of poll times have passed spawn a bubble
-            if (redArray.size < 2) {
+        if (timeKeeper > 8) { //if a certain number of poll times have passed spawn a bubble
+            //if (redArray.size < 3) {
                 redArray.add(new Atom(true, redBandX));
-            }
-            if (blueArray.size < 2) {
+            //}
+            //if (blueArray.size < 3) {
                 blueArray.add(new Atom(false, blueBandX)); //spawns bubble
-            }
+            //}
             timeKeeper = 0;//resets sum poll time
         }
     }
@@ -240,22 +249,28 @@ public class PlayState extends State {
         sumRed = 0; //reset sum
         sumBlue = 0;
         for (int i = 0; i < redArray.size; i++) {
-            redArray.get(i).update(dt, redBandX);
             sumRed += redArray.get(i).getAtomicNumber();
         }
         for (int i = 0; i < blueArray.size; i++) {
-            blueArray.get(i).update(dt, blueBandX);
             sumBlue += blueArray.get(i).getAtomicNumber();
         }
         updateField(dt);
+        redEnergyBand.update(dt, redBandX);
+        blueEnergyBand.update(dt, blueBandX);
+        for (int i = 0; i < redArray.size; i++) {
+            redArray.get(i).update(dt, redEnergyBand.getPosition());
+        }
+        for (int i = 0; i < blueArray.size; i++) {
+            blueArray.get(i).update(dt, blueEnergyBand.getPosition());
+        }
     }
     private void updateField(float dt){
-        float Rprop = 1f - sumRed/(2f*(float)goal);
-        float Bprop = 1f + sumBlue/(2f*(float)goal);
-        float moveR = ((float)Atomsly.WIDTH - (float) band.getWidth())/2f;
-        float moveB = ((float)Atomsly.WIDTH - (float) band.getWidth())/2f;
-        redBandX = moveR * Rprop;
-        blueBandX = moveB * Bprop;
+        sumdt += dt;
+        float constraint = sumdt / 100;
+        float Rprop = 1f - sumRed/((4f-constraint)*(float)goal);
+        float Bprop = 1f + sumBlue/((4f-constraint)*(float)goal);
+        redBandX = (((float)Atomsly.WIDTH-200)/2f) * Rprop;
+        blueBandX = (((float)Atomsly.WIDTH+200)/2f) * Bprop;
     }
 
     @Override
@@ -271,12 +286,13 @@ public class PlayState extends State {
         font.draw(sb, Integer.toString(goal - (sumRed+sumBlue)), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
         font.setColor(Color.WHITE);
         font.draw(sb, Integer.toString(score), FONT_SIZE / 2, Atomsly.HEIGHT - FONT_SIZE / 2);
-        //sb.draw(goal, Atomsly.WIDTH/2 - (goal.getWidth()/2), Atomsly.HEIGHT/2 - (goal.getHeight()/2));
-        //sb.draw(redSpawner2, Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
-        //sb.draw(blueSpawner2, 3 * Atomsly.WIDTH / 4 - (blueSpawner2.getWidth() / 4), 0);
+
         font.setColor(com.badlogic.gdx.graphics.Color.RED);
-        sb.draw(band, redBandX, 0);
-        sb.draw(band, blueBandX, 0);
+        sb.draw(redSpawner2, redEnergyBand.getPosition() - redSpawner2.getWidth()/2, -70);
+        sb.draw(blueSpawner2, blueEnergyBand.getPosition() - blueSpawner2.getWidth()/2, 70+Atomsly.HEIGHT - blueSpawner.getHeight());
+
+        sb.draw(redEnergyBand.getTexture(), redEnergyBand.getPosition() - redEnergyBand.getTexture().getWidth()/2, 0);//redBandX - (float) redBand.getWidth()/2f, 0);
+        sb.draw(blueEnergyBand.getTexture(), blueEnergyBand.getPosition() - blueEnergyBand.getTexture().getWidth()/2, 0); //blueBandX - (float) blueBand.getWidth()/2f, 0);
 
         for (Atom bub : redArray) {
 //            Sprite sprite = bub.getSprite();
@@ -299,8 +315,8 @@ public class PlayState extends State {
                 font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x + bub.getSizeCurrent() / 2 - FONT_SIZE / 2, bub.getPosition().y + bub.getSizeCurrent() / 2 + FONT_SIZE / 2);
             }
         }
-        sb.draw(redSpawner, 0, 0);
-        sb.draw(blueSpawner, Atomsly.WIDTH - (blueSpawner.getWidth()), Atomsly.HEIGHT - blueSpawner.getHeight());
+        sb.draw(redSpawner, redEnergyBand.getPosition() - redSpawner.getWidth()/2, -70);
+        sb.draw(blueSpawner, blueEnergyBand.getPosition() - blueSpawner.getWidth()/2, 70+Atomsly.HEIGHT - blueSpawner.getHeight());
 //        SR.setColor(Color.BLACK);
 //        SR.begin(ShapeRenderer.ShapeType.Line);
 //        for (Atom bub : redArray) {
@@ -311,12 +327,14 @@ public class PlayState extends State {
 //        }
 //        SR.end();
         sb.end();
-
-
+        if ((score == 1) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)){
+            gsm.get(new MenuState(gsm));
+            dispose();
+        }
         if (sumRed+sumBlue == goal) {
             goal = rand.nextInt(50-10)+10;
             score++;
-            if (score == 3) {
+            if ((score == 3) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)){
                 gsm.get(new MenuState(gsm));
                 dispose();
             }

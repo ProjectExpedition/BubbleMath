@@ -14,7 +14,7 @@ import java.util.Random;
  * Created by David on 9/07/2016.
  */
 public class Atom {
-    private static final int RANGE = 20;            //number of atoms
+    private static final int RANGE = 30;            //number of atoms
     private static final int BLUESTARTX = 1280;     //starting x coordinate for blue
     private static final int REDSTARTX = 0;         //starting x coordinate for red
     private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
@@ -33,16 +33,16 @@ public class Atom {
     public boolean is_grabbed = false;
     public int grabbed_by;
 
-    /**
-     * Atom() creates an instance of a bubble sprite for the array.
-     * The colour is selected using a random Boolean isRed; true creates a
-     * blue bubble, false creates red.
-     * A random scale factor is then created to be attached to the bubble.
-     */
     public Atom(boolean isRed,float x) {
+        /**
+         * Atom() creates an instance of a bubble sprite for the array.
+         * The colour is selected using a random Boolean isRed; true creates a
+         * blue bubble, false creates red.
+         * A random scale factor is then created to be attached to the bubble.
+         */
         this.isRed = isRed;
         Random rand = new Random();
-        velocity = new Vector2(rand.nextInt(15), rand.nextInt(15));//set random velocity vector
+        velocity = new Vector2((rand.nextInt(2*15)-15), (rand.nextInt(40)+80));//set random velocity vector
         sprite = new Sprite(buildTexture(isRed,x));
         //sprite.setOriginCenter(); //for rotation
         setSize(rand.nextInt(RANGE) + 1);
@@ -63,8 +63,8 @@ public class Atom {
 
     public void update(float dt, float fieldXLocation) { //dt = amount of time passed since last update
         this.dt = dt;
-        float distance=0.01f*Math.abs(circleBound.x-(fieldXLocation));
-        float pos = circleBound.x;
+        float distance=0.01f*Math.abs(circleBound.x-(fieldXLocation) - circleBound.radius);
+        float pos = circleBound.x - circleBound.radius; //TODO fix this
         if (distance > 0.01) {
             if ((isRed) && (pos > (fieldXLocation))) { // on right
                 velocity.add((-distance), 0);
@@ -78,11 +78,10 @@ public class Atom {
         }
         velocity.scl(dt);
         if ((scaleFactor <= 1)) {
-            scaleFactor += dt; //collect dt
+            scaleFactor += dt/2; //collect dt
             sizeCurrent = Math.round(sizeFinal * scaleFactor); //increase bubble scale
-        } else {
-            position.add(velocity.x, velocity.y);
         }
+        position.add(velocity.x, velocity.y);
         circleBound.set((position.x + (sizeCurrent/2f))/PlayState.X_SCALE_FACTOR,(position.y + (sizeCurrent/2f))/PlayState.Y_SCALE_FACTOR, sizeCurrent / 2f);
         System.out.println(position);
         System.out.println(circleBound);
@@ -93,9 +92,6 @@ public class Atom {
     public Vector2 getPosition() {
         return position;
     }
-
-    /* grabBubble() is called on touch and allocates touched bubbles to a pointer
-     */
 
     public void grabBubble(int pointer) {
         //the following retrieve the x and y coordinates of the current touch.
@@ -112,10 +108,10 @@ public class Atom {
         }
     }
 
-    /* dragBubble is called when a drag even is detected and causes the attached bubble to follow
-     *  the player's touch.
-     */
     public void dragBubble(float x, float y, int pointer) {
+        /* dragBubble is called when a drag even is detected and causes the attached bubble to follow
+        *  the player's touch.
+        */
         position.x = PlayState.X_SCALE_FACTOR * x - ((float)sizeCurrent / 2f);
         position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y) - ((float)sizeCurrent / 2f);
         velocity.set(0, 0);
@@ -135,9 +131,9 @@ public class Atom {
 
     }
 
-    /* releaseBubble releases the bubbles from grabbed state on touchUp.
-     */
     public void releaseBubble(int pointer) {
+        /* releaseBubble releases the bubbles from grabbed state on touchUp.
+        */
         if (grabbed_by == pointer) {
             is_grabbed = false;
         }
@@ -147,12 +143,12 @@ public class Atom {
         return circleBound;
     }
 
-    /**
-     * Work in progress; resizes surviving bubble after collision.
-     * I want to implement a change in vector and velocity based
-     * on the change in mass (i.e. dE=dMc^2->v=sqrt(2E/m), etc.
-     */
     public void setSize(int newMass) {
+        /**
+         * Work in progress; resizes surviving bubble after collision.
+         * I want to implement a change in vector and velocity based
+         * on the change in mass (i.e. dE=dMc^2->v=sqrt(2E/m), etc.
+         */
         //scaleFactor = -atomicNumber/newMass;
         atomicNumber = newMass;
         sizeFinal = (int) Math.round(sprite.getWidth() * (0.4 + (0.6 * atomicNumber) / RANGE));
@@ -171,11 +167,11 @@ public class Atom {
         }
         if (position.x < 0) {
             position.x = 0;
-            velocity.x = -velocity.x;
+            velocity.x = 0;
         }
         if (position.x > (Atomsly.WIDTH - sizeCurrent)) {
             position.x = Atomsly.WIDTH - sizeCurrent;
-            velocity.x = -velocity.x;
+            velocity.x = 0;
         }
     }
 
@@ -191,5 +187,3 @@ public class Atom {
         return atomicNumber;
     }
 }
-
-
