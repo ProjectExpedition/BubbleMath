@@ -45,7 +45,6 @@ public class PlayState extends State {
     private float sumdt = 0;
     private ShapeRenderer SR;
 
-
     public PlayState(GameStateManager gsm) {
         /* PlayState(GameStateManager gsm) is called after Menu State
         * Allocates memory and calls constructors for all data members.
