@@ -46,10 +46,10 @@ public class Atom {
         Random rand = new Random();
         velocity = new Vector2((rand.nextInt(2*15)-15), (rand.nextInt(40)+80));//set random velocity vector
         sprite = new Sprite(buildTexture(isRed,x));
-        //sprite.setOriginCenter(); //for rotation
+        sprite.setOriginCenter(); //for rotation
         setSize(rand.nextInt(RANGE) + 1);
         //shells = new Array<Texture()>;
-        circleBound = new Circle(position.x + ((float)sizeCurrent / 2f), position.y + (float)sizeCurrent / 2f, (float)sizeCurrent / 2f);
+        circleBound = new Circle(position.x, position.y , (float)sizeCurrent / 2f);
     }
 
     public Texture buildTexture(boolean isRed, float x) {
@@ -66,7 +66,7 @@ public class Atom {
 
     public void update(float dt, float xMoveTo) { //dt = amount of time passed since last update
         this.dt = dt;
-        float distance = (xMoveTo) - circleBound.x*PlayState.X_SCALE_FACTOR + 30;
+        float distance = (xMoveTo) - circleBound.x*PlayState.X_SCALE_FACTOR + 30; //30*2 = sze of beam
         //float distance=0.01f*Math.abs(circleBound.x-(xMoveTo) - circleBound.radius);
         //float pos = circleBound.x - circleBound.radius;
 
@@ -95,7 +95,7 @@ public class Atom {
             scaleFactor += dt/2; //collect dt
         }
         position.add(velocity.x, velocity.y);
-        circleBound.set((position.x + (sizeCurrent/2f))/PlayState.X_SCALE_FACTOR,(position.y + (sizeCurrent/2f))/PlayState.Y_SCALE_FACTOR, sizeCurrent/PlayState.X_SCALE_FACTOR / 2f);
+        circleBound.set((position.x)/PlayState.X_SCALE_FACTOR,(position.y)/PlayState.Y_SCALE_FACTOR, sizeCurrent/PlayState.X_SCALE_FACTOR / 2f);
         cornerCollision(); //detect collision after coordinates updated
         velocity.scl(1 / dt);
     }
@@ -110,8 +110,8 @@ public class Atom {
         y_touch_location = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - Gdx.input.getY(pointer));
         //the following creates a pair of variables to check the difference between
         //the bubble position and the touch location.
-        float x_touch_difference = (position.x + sizeCurrent / 2) - x_touch_location;
-        float y_touch_difference = (position.y + sizeCurrent / 2) - y_touch_location;
+        float x_touch_difference = (position.x) - x_touch_location;
+        float y_touch_difference = (position.y) - y_touch_location;
 
         if (Math.hypot(x_touch_difference, y_touch_difference) < sizeCurrent / 2) {
             is_grabbed = true;
@@ -123,8 +123,8 @@ public class Atom {
         /* dragBubble is called when a drag even is detected and causes the attached bubble to follow
         *  the player's touch.
         */
-        position.x = PlayState.X_SCALE_FACTOR * x - ((float)sizeCurrent / 2f);
-        position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y) - ((float)sizeCurrent / 2f);
+        position.x = PlayState.X_SCALE_FACTOR * x ;
+        position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y);
         velocity.set(0, 0);
 //        velocity.set((Gdx.input.getDeltaX(pointer) / dt), (Gdx.input.getDeltaY(pointer) / dt));
 //        if (velocity.x >= 15 / dt) {
@@ -168,20 +168,20 @@ public class Atom {
     }
 
     public void cornerCollision() {
-        if ((position.y < 0)) {
-            position.y = 0;
+        if ((position.y < sizeCurrent/2)) {
+            position.y = sizeCurrent/2;
             velocity.y = -velocity.y;
         }
-        if (position.y > (Atomsly.HEIGHT - sizeCurrent)) {
+        if (position.y > (Atomsly.HEIGHT - sizeCurrent/2)) {
             velocity.y = -velocity.y;
-            position.y = Atomsly.HEIGHT - sizeCurrent;
+            position.y = Atomsly.HEIGHT - sizeCurrent/2;
         }
-        if (position.x < 0) {
-            position.x = 0;
+        if (position.x < sizeCurrent/2) {
+            position.x = sizeCurrent/2;
             velocity.x = 0;
         }
-        if (position.x > (Atomsly.WIDTH - sizeCurrent)) {
-            position.x = Atomsly.WIDTH - sizeCurrent;
+        if (position.x > (Atomsly.WIDTH - sizeCurrent/2)) {
+            position.x = Atomsly.WIDTH - sizeCurrent/2;
             velocity.x = 0;
         }
     }
