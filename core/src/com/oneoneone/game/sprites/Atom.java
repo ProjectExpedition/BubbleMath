@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.states.PlayState;
 
@@ -32,6 +33,7 @@ public class Atom {
     private Circle circleBound;     //collision detection representation of bubble
     public boolean is_grabbed = false;
     public int grabbed_by;
+    private Array<Texture> shells;
 
     public Atom(boolean isRed,float x) {
         /**
@@ -46,6 +48,7 @@ public class Atom {
         sprite = new Sprite(buildTexture(isRed,x));
         //sprite.setOriginCenter(); //for rotation
         setSize(rand.nextInt(RANGE) + 1);
+        //shells = new Array<Texture()>;
         circleBound = new Circle(position.x + ((float)sizeCurrent / 2f), position.y + (float)sizeCurrent / 2f, (float)sizeCurrent / 2f);
     }
 

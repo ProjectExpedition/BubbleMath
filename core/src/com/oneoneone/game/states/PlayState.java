@@ -326,10 +326,6 @@ public class PlayState extends State {
 //        }
 //        SR.end();
         sb.end();
-        if ((score == 1) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)){
-            gsm.get(new MenuState(gsm));
-            dispose();
-        }
         if (sumRed+sumBlue == goal) {
             goal = rand.nextInt(50-10)+10;
             score++;
@@ -341,7 +337,7 @@ public class PlayState extends State {
     }
 
     @Override
-    public void dispose() {//TODO write a dispose method to avoid memory leaks
+    public void dispose() {
         background.dispose();
         font.dispose();
         redArray.clear();
