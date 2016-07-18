@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+//import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.sprites.Atom;
@@ -42,7 +43,7 @@ public class PlayState extends State {
     private Random rand;
     public int grabLoop = 0;
     private float sumdt = 0;
-    //private ShapeRenderer SR;
+//    private ShapeRenderer SR;
 
 
     public PlayState(GameStateManager gsm) {
@@ -55,7 +56,7 @@ public class PlayState extends State {
         buildObjects();
         rand = new Random();
         goal = rand.nextInt(100-10)+10;
-        //SR = new ShapeRenderer();
+//        SR = new ShapeRenderer();
     }
 
     private void buildObjects() {
@@ -78,7 +79,7 @@ public class PlayState extends State {
         redSpawner = new Texture("RPipe.png");
         blueSpawner = new Texture("BPipe.png");
         redSpawner2 = new Texture("RHole.png");
-        blueSpawner2 = new Texture("BHole.png");
+        blueSpawner2 = new Texture("RHole.png");
         background = new Texture("bg.png");
     }
 
@@ -325,19 +326,23 @@ public class PlayState extends State {
 //            SR.circle(bub.getCircleBound().x,bub.getCircleBound().y,bub.getCircleBound().radius);
 //        }
 //        SR.end();
-        sb.end();
+//        sb.end();
+        if ((score == 1) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)){
+            gsm.get(new MenuState(gsm));
+            //dispose();
+        }
         if (sumRed+sumBlue == goal) {
             goal = rand.nextInt(50-10)+10;
             score++;
             if ((score == 3) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)){
                 gsm.get(new MenuState(gsm));
-                dispose();
+                //dispose();
             }
         }
     }
 
     @Override
-    public void dispose() {
+    public void dispose() {//TODO write a dispose method to avoid memory leaks
         background.dispose();
         font.dispose();
         redArray.clear();
