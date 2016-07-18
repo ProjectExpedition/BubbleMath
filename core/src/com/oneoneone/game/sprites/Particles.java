@@ -25,7 +25,7 @@ public class Particles {
         }
         peg=new ParticleEffect();
         peg.load(Gdx.files.internal(emitter),Gdx.files.internal(""));
-        peg.getEmitters().first().setPosition(emitterPosition.x,emitterPosition.y);
+        peg.setPosition(emitterPosition.x,emitterPosition.y);
         peg.start();
     }
     public void update(float dt){
