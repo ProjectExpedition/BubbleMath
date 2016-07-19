@@ -49,8 +49,12 @@ public class PlayState extends State {
     private Random rand;
     public int grabLoop = 0;
     private float sumdt = 0;
-    private Sound boom=Gdx.audio.newSound(Gdx.files.internal("boom.mp3"));
-
+    private Sound boom=Gdx.audio.newSound(Gdx.files.internal("boom.wav"));
+    private Sound boom2=Gdx.audio.newSound(Gdx.files.internal("boom2.wav"));
+    private Sound boom3=Gdx.audio.newSound(Gdx.files.internal("boom3.wav"));
+    private Sound boom4=Gdx.audio.newSound(Gdx.files.internal("boom4.wav"));
+    private Sound boom5=Gdx.audio.newSound(Gdx.files.internal("boom5.wav"));
+    private Sound fieldSound=Gdx.audio.newSound(Gdx.files.internal("field.wav"));
 
 //    private ShapeRenderer SR;
 
@@ -62,6 +66,7 @@ public class PlayState extends State {
         buildFont();
         buildTextures();
         buildObjects();
+        fieldSound.loop(0.5f);
         rand = new Random();
         goal = rand.nextInt(100 - 10) + 10;
 //        SR = new ShapeRenderer();
@@ -189,22 +194,22 @@ public class PlayState extends State {
                         redArray.removeIndex(i);
                         i = i - 1; //resetting the iteration here means no bubbles are skipped on the this update
                         k = k - 1;
-                        boom.play();
-                        boom.play();
+                        playBoom(1, redMass);
+                        playBoom(5, blueMass);
                     } else if (blueMass > redMass) { //removes the red and resizes the blue if the blue is larger
                         blueMass = blueMass - redMass;
                         explosions.add(new Explosions(redArray.get(i).getPosition(), true));
                         blueArray.get(k).setSize(blueMass);
                         redArray.removeIndex(i);
                         i = i - 1;
-                        boom.play();
+                        playBoom(3, redMass);
                     } else { //removes the blue and resizes the red if red is bigger
                         redMass = redMass - blueMass;
                         explosions.add(new Explosions(blueArray.get(k).getPosition(), false));
                         redArray.get(i).setSize(redMass);
                         blueArray.removeIndex(k);
                         k = k - 1;
-                        boom.play();
+                        playBoom(4, blueMass);
                     }
                 }
                 /*collision detection stuff is here*/
@@ -244,6 +249,21 @@ public class PlayState extends State {
 //                        bubbles.removeIndex(i);
 //                        bubbles.removeIndex(k);
             }
+        }
+    }
+    private void playBoom(int boomType, float volume){
+        volume=1f;
+//        int boomType=new Random().nextInt(5);
+        if (boomType==1){
+            boom.play(volume);
+        }else if (boomType==2){
+            boom2.play(volume);
+        }else if (boomType==3){
+            boom3.play(volume);
+        }else if (boomType==4){
+            boom4.play(volume);
+        }else{
+            boom5.play(volume);
         }
     }
 
@@ -309,6 +329,7 @@ public class PlayState extends State {
         * draws after all positions and conditions have been calculated in update in Atomsly render
         */
         if ((score == 1) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)) {
+            fieldSound.stop();
             gsm.get(new MenuState(gsm));
             dispose();
         }
@@ -386,5 +407,7 @@ public class PlayState extends State {
         blueArray.clear();
         redSpawner.dispose();
         blueSpawner.dispose();
+        boom.dispose();
+        fieldSound.dispose();
     }
 }
