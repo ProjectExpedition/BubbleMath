@@ -50,10 +50,10 @@ public class PlayState extends State {
     public int grabLoop = 0;
     private float sumdt = 0;
     private Sound boom=Gdx.audio.newSound(Gdx.files.internal("boom.wav"));
-    private Sound boom2=Gdx.audio.newSound(Gdx.files.internal("boom2.wav"));
+//    private Sound boom2=Gdx.audio.newSound(Gdx.files.internal("boom2.wav"));
     private Sound boom3=Gdx.audio.newSound(Gdx.files.internal("boom3.wav"));
     private Sound boom4=Gdx.audio.newSound(Gdx.files.internal("boom4.wav"));
-    private Sound boom5=Gdx.audio.newSound(Gdx.files.internal("boom5.wav"));
+//    private Sound boom5=Gdx.audio.newSound(Gdx.files.internal("boom5.wav"));
     private Sound fieldSound=Gdx.audio.newSound(Gdx.files.internal("field.wav"));
 
 //    private ShapeRenderer SR;
@@ -194,22 +194,22 @@ public class PlayState extends State {
                         redArray.removeIndex(i);
                         i = i - 1; //resetting the iteration here means no bubbles are skipped on the this update
                         k = k - 1;
-                        playBoom(1, redMass);
-                        playBoom(5, blueMass);
+                        playBoom(redMass);
+                        playBoom(blueMass);
                     } else if (blueMass > redMass) { //removes the red and resizes the blue if the blue is larger
                         blueMass = blueMass - redMass;
                         explosions.add(new Explosions(redArray.get(i).getPosition(), true));
                         blueArray.get(k).setSize(blueMass);
                         redArray.removeIndex(i);
                         i = i - 1;
-                        playBoom(3, redMass);
+                        playBoom(redMass);
                     } else { //removes the blue and resizes the red if red is bigger
                         redMass = redMass - blueMass;
                         explosions.add(new Explosions(blueArray.get(k).getPosition(), false));
                         redArray.get(i).setSize(redMass);
                         blueArray.removeIndex(k);
                         k = k - 1;
-                        playBoom(4, blueMass);
+                        playBoom(blueMass);
                     }
                 }
                 /*collision detection stuff is here*/
@@ -251,19 +251,15 @@ public class PlayState extends State {
             }
         }
     }
-    private void playBoom(int boomType, float volume){
-        volume=1f;
-//        int boomType=new Random().nextInt(5);
+    private void playBoom(float volume){
+        volume= (float) (Math.ceil(volume/5)/4f);
+        int boomType=new Random().nextInt(3);
         if (boomType==1){
             boom.play(volume);
         }else if (boomType==2){
-            boom2.play(volume);
-        }else if (boomType==3){
             boom3.play(volume);
-        }else if (boomType==4){
-            boom4.play(volume);
         }else{
-            boom5.play(volume);
+            boom4.play(volume);
         }
     }
 
@@ -408,6 +404,10 @@ public class PlayState extends State {
         redSpawner.dispose();
         blueSpawner.dispose();
         boom.dispose();
+//        boom2.dispose();
+        boom3.dispose();
+        boom4.dispose();
+//        boom5.dispose();
         fieldSound.dispose();
     }
 }
