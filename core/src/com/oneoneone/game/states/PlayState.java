@@ -254,9 +254,9 @@ public class PlayState extends State {
     private void playBoom(float volume){
         volume= (float) (Math.ceil(volume/5))/4f;
         int boomType=new Random().nextInt(3);
-        if (boomType==1){
+        if (boomType==0){
             boom.play(volume);
-        }else if (boomType==2){
+        }else if (boomType==1){
             boom3.play(volume);
         }else{
             boom4.play(volume);
@@ -324,7 +324,7 @@ public class PlayState extends State {
         /* render(float dt) draws all sprites to SpriteBatch declared in Atomsly
         * draws after all positions and conditions have been calculated in update in Atomsly render
         */
-        if ((score == 1) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)) {
+        if (/*(score == 1) ||*/ (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)) {
             fieldSound.stop();
             gsm.get(new MenuState(gsm));
             dispose();
@@ -388,7 +388,7 @@ public class PlayState extends State {
         if (sumRed + sumBlue == goal) {
             goal = rand.nextInt(50 - 10) + 10;
             score++;
-            if ((score == 3) || (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)) {
+            if (/*(score == 3) || */(redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)) {
                 gsm.get(new MenuState(gsm));
                 dispose();
             }
@@ -401,6 +401,9 @@ public class PlayState extends State {
         font.dispose();
         redArray.clear();
         blueArray.clear();
+        explosions.clear();
+        redField.dispose();
+        blueField.dispose();
         redSpawner.dispose();
         blueSpawner.dispose();
         boom.dispose();

@@ -111,8 +111,8 @@ active: false
 - Tint - 
 colorsCount: 3
 colors0: 1.0
-colors1: 1.0
-colors2: 1.0
+colors1: 0.0
+colors2: 0.0
 timelineCount: 1
 timeline0: 0.0
 - Transparency - 
@@ -331,15 +331,15 @@ timeline24: 1.0
 active: false
 - Tint - 
 colorsCount: 9
-colors0: 0.15294118
+colors0: 1.0
 colors1: 0.0
-colors2: 1.0
-colors3: 0.7058824
-colors4: 0.49803922
+colors2: 0.0
+colors3: 0.6431373
+colors4: 0.39215687
 colors5: 1.0
-colors6: 0.0627451
-colors7: 0.08235294
-colors8: 1.0
+colors6: 1.0
+colors7: 0.0627451
+colors8: 0.0627451
 timelineCount: 3
 timeline0: 0.0
 timeline1: 0.4870912
@@ -560,15 +560,15 @@ timeline24: 1.0
 active: false
 - Tint - 
 colorsCount: 9
-colors0: 0.0627451
-colors1: 0.08235294
-colors2: 1.0
+colors0: 1.0
+colors1: 0.0627451
+colors2: 0.0627451
 colors3: 1.0
-colors4: 0.84313726
+colors4: 0.5058824
 colors5: 1.0
-colors6: 0.0627451
-colors7: 0.08235294
-colors8: 1.0
+colors6: 1.0
+colors7: 0.0627451
+colors8: 0.0627451
 timelineCount: 3
 timeline0: 0.0
 timeline1: 0.4870912

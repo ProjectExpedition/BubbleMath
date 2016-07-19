@@ -31,6 +31,7 @@ public class FieldEmitters {
     public void update(float dt) {
         peg.update(dt);
     }
+    public void dispose(){peg.dispose();}
 
     public void draw(Batch spriteBatch){
         peg.draw(spriteBatch);

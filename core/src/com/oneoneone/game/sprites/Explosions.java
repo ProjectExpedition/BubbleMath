@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Vector2;
 public class Explosions {
     private static final String bsplosion="bsplosion.particle";
     private static final String rsplosion="rsplosion.particle";
-    private static final String rbsplosion="rbsplosion.particle";
     private String emitter;
     private Vector2 emitterPosition;
     private ParticleEffect peg;
