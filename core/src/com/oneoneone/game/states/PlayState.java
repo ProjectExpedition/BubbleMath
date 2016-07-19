@@ -2,6 +2,7 @@ package com.oneoneone.game.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -311,7 +312,7 @@ public class PlayState extends State {
         font.draw(sb, Integer.toString(goal - (sumRed + sumBlue)), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
         font.setColor(Color.WHITE);
         font.draw(sb, Integer.toString(score), FONT_SIZE / 2, Atomsly.HEIGHT - FONT_SIZE / 2);
-
+        font.draw(sb,"FPS: " + Integer.toString(Gdx.graphics.getFramesPerSecond()), 50f, 50f);
         font.setColor(com.badlogic.gdx.graphics.Color.RED);
         sb.draw(redSpawner2, redEnergyBand.getPosition() - redSpawner2.getWidth() / 2, -70);
         sb.draw(blueSpawner2, blueEnergyBand.getPosition() - blueSpawner2.getWidth() / 2, 70 + Atomsly.HEIGHT - blueSpawner.getHeight());
