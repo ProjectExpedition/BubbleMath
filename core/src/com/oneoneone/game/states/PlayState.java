@@ -1,6 +1,7 @@
 package com.oneoneone.game.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.Texture;
@@ -48,6 +49,9 @@ public class PlayState extends State {
     private Random rand;
     public int grabLoop = 0;
     private float sumdt = 0;
+    private Sound boom=Gdx.audio.newSound(Gdx.files.internal("boom.mp3"));
+
+
 //    private ShapeRenderer SR;
 
     public PlayState(GameStateManager gsm) {
@@ -185,18 +189,22 @@ public class PlayState extends State {
                         redArray.removeIndex(i);
                         i = i - 1; //resetting the iteration here means no bubbles are skipped on the this update
                         k = k - 1;
+                        boom.play();
+                        boom.play();
                     } else if (blueMass > redMass) { //removes the red and resizes the blue if the blue is larger
                         blueMass = blueMass - redMass;
                         explosions.add(new Explosions(redArray.get(i).getPosition(), true));
                         blueArray.get(k).setSize(blueMass);
                         redArray.removeIndex(i);
                         i = i - 1;
+                        boom.play();
                     } else { //removes the blue and resizes the red if red is bigger
                         redMass = redMass - blueMass;
                         explosions.add(new Explosions(blueArray.get(k).getPosition(), false));
                         redArray.get(i).setSize(redMass);
                         blueArray.removeIndex(k);
                         k = k - 1;
+                        boom.play();
                     }
                 }
                 /*collision detection stuff is here*/

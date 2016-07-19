@@ -1,6 +1,7 @@
 package com.oneoneone.game.sprites;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector2;
@@ -17,7 +18,9 @@ public class Explosions {
     private ParticleEffect peg;
 
     public Explosions(Vector2 pos, boolean isRed){
+
         emitterPosition=pos;
+
         if(isRed){
             emitter=rsplosion;
         }else{
