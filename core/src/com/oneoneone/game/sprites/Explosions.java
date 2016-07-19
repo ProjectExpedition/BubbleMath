@@ -17,10 +17,9 @@ public class Explosions {
     private Vector2 emitterPosition;
     private ParticleEffect peg;
 
-    public Explosions(Vector2 pos, boolean isRed){
-
+    public Explosions(Vector2 pos, boolean isRed, float scaleFactor){
+        scaleFactor= (float) (Math.ceil(scaleFactor/7))/3f;
         emitterPosition=pos;
-
         if(isRed){
             emitter=rsplosion;
         }else{
@@ -29,6 +28,7 @@ public class Explosions {
         peg=new ParticleEffect();
         peg.load(Gdx.files.internal(emitter),Gdx.files.internal(""));
         peg.setPosition(emitterPosition.x,emitterPosition.y);
+        peg.scaleEffect(scaleFactor);
         peg.start();
     }
     public void update(float dt){

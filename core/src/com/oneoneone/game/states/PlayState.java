@@ -188,8 +188,8 @@ public class PlayState extends State {
                     blueMass = blueArray.get(k).getAtomicNumber();
                     redMass = redArray.get(i).getAtomicNumber();
                     if (blueMass == redMass) {  //this clause removes both bubbles if they're equal mass
-                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false));
-                        explosions.add(new Explosions(redArray.get(i).getPosition(), true));
+                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false,blueMass));
+                        explosions.add(new Explosions(redArray.get(i).getPosition(), true,redMass));
                         blueArray.removeIndex(k);
                         redArray.removeIndex(i);
                         i = i - 1; //resetting the iteration here means no bubbles are skipped on the this update
@@ -198,14 +198,14 @@ public class PlayState extends State {
                         playBoom(blueMass);
                     } else if (blueMass > redMass) { //removes the red and resizes the blue if the blue is larger
                         blueMass = blueMass - redMass;
-                        explosions.add(new Explosions(redArray.get(i).getPosition(), true));
+                        explosions.add(new Explosions(redArray.get(i).getPosition(), true, redMass));
                         blueArray.get(k).setSize(blueMass);
                         redArray.removeIndex(i);
                         i = i - 1;
                         playBoom(redMass);
                     } else { //removes the blue and resizes the red if red is bigger
                         redMass = redMass - blueMass;
-                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false));
+                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false,blueMass));
                         redArray.get(i).setSize(redMass);
                         blueArray.removeIndex(k);
                         k = k - 1;
@@ -252,7 +252,7 @@ public class PlayState extends State {
         }
     }
     private void playBoom(float volume){
-        volume= (float) (Math.ceil(volume/5)/4f);
+        volume= (float) (Math.ceil(volume/5))/4f;
         int boomType=new Random().nextInt(3);
         if (boomType==1){
             boom.play(volume);
