@@ -53,7 +53,7 @@ public class PlayState extends State {
 //    private Sound boom2=Gdx.audio.newSound(Gdx.files.internal("boom2.wav"));
     private Sound boom3=Gdx.audio.newSound(Gdx.files.internal("boom3.wav"));
     private Sound boom4=Gdx.audio.newSound(Gdx.files.internal("boom4.wav"));
-//    private Sound boom5=Gdx.audio.newSound(Gdx.files.internal("boom5.wav"));
+    private Sound boom5=Gdx.audio.newSound(Gdx.files.internal("boom5.wav"));
     private Sound fieldSound=Gdx.audio.newSound(Gdx.files.internal("field.wav"));
 
 //    private ShapeRenderer SR;
@@ -255,11 +255,11 @@ public class PlayState extends State {
         volume= (float) (Math.ceil(volume/5))/4f;
         int boomType=new Random().nextInt(3);
         if (boomType==0){
-            boom.play(volume);
+            boom5.play(volume);
         }else if (boomType==1){
-            boom3.play(volume);
+            boom5.play(volume);
         }else{
-            boom4.play(volume);
+            boom5.play(volume);
         }
     }
 
