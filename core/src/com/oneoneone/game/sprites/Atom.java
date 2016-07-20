@@ -157,6 +157,10 @@ public class Atom {
         sizeCurrent = sizeFinal;
     }
 
+    public static int getRANGE() {
+        return RANGE;
+    }
+
     public void cornerCollision() {
         if ((position.y < sizeCurrent/2)) {
             position.y = sizeCurrent/2;

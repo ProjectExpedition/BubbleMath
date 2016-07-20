@@ -252,15 +252,8 @@ public class PlayState extends State {
         }
     }
     private void playBoom(float volume){
-        volume= (float) (Math.ceil(volume/5))/4f;
-        int boomType=new Random().nextInt(3);
-        if (boomType==0){
-            boom5.play(volume);
-        }else if (boomType==1){
-            boom5.play(volume);
-        }else{
-            boom5.play(volume);
-        }
+        volume= (float) (0.4 + (0.6 * volume) / Atom.getRANGE());
+        boom5.play(volume);
     }
 
     @Override
