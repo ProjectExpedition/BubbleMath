@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.physics.box2d.Box2D;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.utils.Array;
 import com.oneoneone.game.Atomsly;
 import com.oneoneone.game.sprites.Atom;
@@ -49,12 +51,12 @@ public class PlayState extends State {
     private Random rand;
     public int grabLoop = 0;
     private float sumdt = 0;
-    private Sound boom=Gdx.audio.newSound(Gdx.files.internal("boom.wav"));
-//    private Sound boom2=Gdx.audio.newSound(Gdx.files.internal("boom2.wav"));
-    private Sound boom3=Gdx.audio.newSound(Gdx.files.internal("boom3.wav"));
-    private Sound boom4=Gdx.audio.newSound(Gdx.files.internal("boom4.wav"));
-    private Sound boom5=Gdx.audio.newSound(Gdx.files.internal("boom5.wav"));
-    private Sound fieldSound=Gdx.audio.newSound(Gdx.files.internal("field.wav"));
+    private Sound boom = Gdx.audio.newSound(Gdx.files.internal("boom.wav"));
+    //    private Sound boom2=Gdx.audio.newSound(Gdx.files.internal("boom2.wav"));
+    private Sound boom3 = Gdx.audio.newSound(Gdx.files.internal("boom3.wav"));
+    private Sound boom4 = Gdx.audio.newSound(Gdx.files.internal("boom4.wav"));
+    private Sound boom5 = Gdx.audio.newSound(Gdx.files.internal("boom5.wav"));
+    private Sound fieldSound = Gdx.audio.newSound(Gdx.files.internal("field.wav"));
 
 //    private ShapeRenderer SR;
 
@@ -79,8 +81,8 @@ public class PlayState extends State {
 
         redEnergyBand = new EnergyBand((Atomsly.WIDTH / 2) - 30);
         blueEnergyBand = new EnergyBand((Atomsly.WIDTH / 2) + 30);
-        redField = new FieldEmitters(redEnergyBand.getPosition(),true);
-        blueField = new FieldEmitters(blueEnergyBand.getPosition(),false);
+        redField = new FieldEmitters(redEnergyBand.getPosition(), true);
+        blueField = new FieldEmitters(blueEnergyBand.getPosition(), false);
     }
 
     private void buildFont() {
@@ -188,8 +190,8 @@ public class PlayState extends State {
                     blueMass = blueArray.get(k).getAtomicNumber();
                     redMass = redArray.get(i).getAtomicNumber();
                     if (blueMass == redMass) {  //this clause removes both bubbles if they're equal mass
-                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false,blueMass));
-                        explosions.add(new Explosions(redArray.get(i).getPosition(), true,redMass));
+                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false, blueMass));
+                        explosions.add(new Explosions(redArray.get(i).getPosition(), true, redMass));
                         blueArray.removeIndex(k);
                         redArray.removeIndex(i);
                         i = i - 1; //resetting the iteration here means no bubbles are skipped on the this update
@@ -205,7 +207,7 @@ public class PlayState extends State {
                         playBoom(redMass);
                     } else { //removes the blue and resizes the red if red is bigger
                         redMass = redMass - blueMass;
-                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false,blueMass));
+                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false, blueMass));
                         redArray.get(i).setSize(redMass);
                         blueArray.removeIndex(k);
                         k = k - 1;
@@ -251,8 +253,9 @@ public class PlayState extends State {
             }
         }
     }
-    private void playBoom(float volume){
-        volume= (float) (0.4 + (0.6 * volume) / Atom.getRANGE());
+
+    private void playBoom(float volume) {
+        volume = (float) (0.4 + (0.6 * volume) / Atom.getRANGE());
         boom5.play(volume);
     }
 
@@ -330,7 +333,7 @@ public class PlayState extends State {
         font.draw(sb, Integer.toString(goal - (sumRed + sumBlue)), Atomsly.WIDTH / 2 - FONT_SIZE / 2, Atomsly.HEIGHT / 4 + FONT_SIZE / 2);
         font.setColor(Color.WHITE);
         font.draw(sb, Integer.toString(score), FONT_SIZE / 2, Atomsly.HEIGHT - FONT_SIZE / 2);
-        font.draw(sb,"FPS: " + Integer.toString(Gdx.graphics.getFramesPerSecond()), 50f, 50f);
+        font.draw(sb, "FPS: " + Integer.toString(Gdx.graphics.getFramesPerSecond()), 50f, 50f);
         font.setColor(com.badlogic.gdx.graphics.Color.RED);
         sb.draw(redSpawner2, redEnergyBand.getPosition() - redSpawner2.getWidth() / 2, -70);
         sb.draw(blueSpawner2, blueEnergyBand.getPosition() - blueSpawner2.getWidth() / 2, 70 + Atomsly.HEIGHT - blueSpawner.getHeight());
