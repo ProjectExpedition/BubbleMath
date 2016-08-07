@@ -20,11 +20,11 @@ import java.util.Random;
  */
 public class Atom {
     private static final int RANGE = 20;            //number of atoms
-    private static final int BLUESTARTX = 1280;     //starting x coordinate for blue
-    private static final int REDSTARTX = 0;         //starting x coordinate for red
-    private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
+//    private static final int BLUESTARTX = 1280;     //starting x coordinate for blue
+//    private static final int REDSTARTX = 0;         //starting x coordinate for red
+//    private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
     private int atomicNumber;           //random "mass" of the bubble used to generate number in bubble and size
-    private int sizeCurrent = 0;            //current bubble size calculated in update()
+    private int sizeCurrent = 0;        //current bubble size calculated in update()
     private float scaleFactor = 0;      //the scaling factor used to reach final size
     private int sizeFinal;              //final bubble size reached in update()
     private float dt;                   //poll time of current (or last) update
@@ -41,26 +41,36 @@ public class Atom {
 
     /**
      * Atom() creates an instance of a bubble sprite for the array.
-     * The colour is selected using a random Boolean isRed; true creates a
-     * blue bubble, false creates red.
-     * A random scale factor is then created to be attached to the bubble.
+     *@param isRed true or false check, false is blue
+     *@param x x coordinate of the emitter when atom is created
      */
     public Atom(boolean isRed, float x) {
+        //Check if atom is red or blue and intializes variables for the bubble
         this.isRed = isRed;
         Random rand = new Random();
         velocity = new Vector2((rand.nextInt(2 * 15) - 15), (rand.nextInt(40) + 80));//set random velocity vector
         sprite = new Sprite(buildTexture(isRed, x));
         setSize(rand.nextInt(RANGE) + 1);
 
+        //WIP implementation of shells
         int i = 0;
 //        shells = new Array<Sprite>();
 //        while (i <= atomicNumber){
 //            shells.add(sprite);
 //        }
         sprite.setOriginCenter(); //for rotation
+
+        //set boundary for collision detection etc.
         circleBound = new Circle(position.x / PlayState.X_SCALE_FACTOR, position.y / PlayState.X_SCALE_FACTOR, (float) sizeCurrent / 2f);
     }
 
+    /**
+     * Assigns the texture file for the atom, blue or red, and creates the postion vector.
+     * The y coordinate is set the top of the screen for blue and bottom for red
+     * @param isRed true is red, false is blue
+     * @param x x coordinate of the emitter at the time
+     * @return texture file name
+     */
     public Texture buildTexture(boolean isRed, float x) {
         Texture texture;
         if (isRed) {
@@ -73,6 +83,11 @@ public class Atom {
         return texture;
     }
 
+    /**
+     * Called by PlayState.java to recalculate the positions and sizes atoms each tick
+     * @param dt the change in time
+     * @param xMoveTo the x coordinate of the field emitter
+     */
     public void update(float dt, float xMoveTo) { //dt = amount of time passed since last update
         this.dt = dt;
         float distance = (xMoveTo) - circleBound.x * PlayState.X_SCALE_FACTOR + 30; //30*2 = sze of beam
@@ -94,10 +109,18 @@ public class Atom {
         velocity.scl(1 / dt);
     }
 
+    /**
+     * Gets the postion of an atom
+     * @return atom's position vector
+     */
     public Vector2 getPosition() {
         return position;
     }
 
+    /**
+     * checks the position of an atom relative to a touch location
+     * @param pointer the pointer being check against
+     */
     public void grabBubble(int pointer) {
         //the following retrieve the x and y coordinates of the current touch.
         x_touch_location = PlayState.X_SCALE_FACTOR * (Gdx.input.getX(pointer));
@@ -113,10 +136,13 @@ public class Atom {
         }
     }
 
+    /**
+     * drags a bubble when a drag event is detected
+     * @param x x coordinate of drag event
+     * @param y y coordinate of drag event
+     * @param pointer pointer being dragged unused atm
+     */
     public void dragBubble(float x, float y, int pointer) {
-        /* dragBubble is called when a drag even is detected and causes the attached bubble to follow
-        *  the player's touch.
-        */
         position.x = PlayState.X_SCALE_FACTOR * x;
         position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y);
         velocity.set(0, 0);
@@ -136,18 +162,28 @@ public class Atom {
 
     }
 
+    /**
+     * resets the is_grabbed state when a touch is released
+     * @param pointer the pointer being checked
+     */
     public void releaseBubble(int pointer) {
-        /* releaseBubble releases the bubbles from grabbed state on touchUp.
-        */
         if (grabbed_by == pointer) {
             is_grabbed = false;
         }
     }
 
+    /**
+     * Gets the circle bound of the atom for collision detection
+     * @return the bound of the atom
+     */
     public Circle getCircleBound() {
         return circleBound;
     }
 
+    /**
+     * 
+     * @param newMass
+     */
     public void setSize(int newMass) {
         /**
          * Work in progress; resizes surviving bubble after collision.
