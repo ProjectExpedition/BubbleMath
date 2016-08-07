@@ -4,7 +4,11 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
- * Created by David on 16/07/2016.
+ * WinState.java
+ * Purpose: Will handle win state
+ *
+ * @author David Hampton, Grace Poole, Roderick Lenz
+ * @version 0.01 07/08/2016
  */
 public class WinState extends State {
     protected WinState(GameStateManager gsm) {

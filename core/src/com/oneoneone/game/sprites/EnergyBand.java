@@ -4,7 +4,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.oneoneone.game.Atomsly;
 
 /**
- * Created by David on 18/07/2016.
+ * EnergyBand.java
+ * Purpose: Currently handles the field emitter sprites
+ * todo: integrate EnergyBand.java and FieldEmitters.java
+ *
+ * @author David Hampton, Grace Poole, Roderick Lenz
+ * @version 0.01 07/08/2016
  */
 public class EnergyBand {
     private float velocity;
@@ -14,8 +19,8 @@ public class EnergyBand {
     private Texture texture;
 
     public EnergyBand(float x) {
-        isRed = x < Atomsly.WIDTH/2;
-        if (isRed){
+        isRed = x < Atomsly.WIDTH / 2;
+        if (isRed) {
             texture = new Texture("red_field.png");
             positionMoveTo = x;
         } else {
@@ -25,17 +30,20 @@ public class EnergyBand {
         position = x;
     }
 
-    public void update(float dt){
+    public void update(float dt) {
         float distance = positionMoveTo - position;
-        if(distance>0){
+        if (distance > 0) {
             velocity = distance;
-        } else if (distance<0){
+        } else if (distance < 0) {
             velocity = distance;
-        } else {velocity = 0;}
+        } else {
+            velocity = 0;
+        }
         velocity *= dt;
         position += velocity;
         velocity *= 1 / dt;
     }
+
     public float getPosition() {
         return position;
     }

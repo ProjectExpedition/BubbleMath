@@ -10,6 +10,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.oneoneone.game.states.GameStateManager;
 import com.oneoneone.game.states.MenuState;
 
+/**
+ * Atomsly.java
+ * Purpose: Top level game state manager (I think... Dave?)
+ *
+ * @author David Hampton, Grace Poole, Roderick Lenz
+ * @version 0.01 07/08/2016
+ */
+
 public class Atomsly extends ApplicationAdapter{
 
 	public static final int WIDTH = 1280;
@@ -44,4 +52,3 @@ public class Atomsly extends ApplicationAdapter{
 		batch.dispose();
 	}
 }
-//minor github test comment

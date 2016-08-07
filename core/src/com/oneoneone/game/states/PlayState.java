@@ -22,7 +22,11 @@ import com.oneoneone.game.sprites.Explosions;
 import com.oneoneone.game.sprites.FieldEmitters;
 
 /**
- * Created by David on 9/07/2016.
+ * PlayState.java
+ * Purpose: Handles in game physics, object interactions, renders stuff and plays sounds
+ *
+ * @author David Hampton, Grace Poole, Roderick Lenz
+ * @version 0.01 07/08/2016
  */
 public class PlayState extends State {
     public static final int SCREEN_WIDTH = Gdx.graphics.getWidth();
@@ -30,29 +34,17 @@ public class PlayState extends State {
     public static final float X_SCALE_FACTOR = (float) Atomsly.WIDTH / SCREEN_WIDTH;
     public static final float Y_SCALE_FACTOR = (float) Atomsly.HEIGHT / SCREEN_HEIGHT;
     private static final int FONT_SIZE = 72;
-    private int sumRed = 0;
-    private int sumBlue = 0;
-    private Texture background;
-    private Texture redSpawner;
-    private Texture blueSpawner;
-    private Texture redSpawner2;
-    private Texture blueSpawner2;
+    private int sumRed = 0, sumBlue = 0, goal, score = 0; // Integer values to store score values
+    private Texture background, redSpawner, blueSpawner, redSpawner2, blueSpawner2;//Texture variables for sprites
     private float timeKeeper = 0; //collects amount of time that has passed in game
-    private Array<Atom> redArray; //Array Container of all bubbles
-    private Array<Atom> blueArray;
-    private Array<Explosions> explosions;
-    private EnergyBand redEnergyBand;
-    private EnergyBand blueEnergyBand;
-    private FieldEmitters redField;
-    private FieldEmitters blueField;
+    private Array<Atom> redArray, blueArray; //Arrays to store atoms, redArray stores read atoms, blue stores blue atoms
+    private Array<Explosions> explosions; // Array to store explosion effect emitters
+    private EnergyBand redEnergyBand, blueEnergyBand; //variable names for energy bands
+    private FieldEmitters redField, blueField; //variable names for field effect emitters
     private BitmapFont font;
-    private int goal;
-    private int score = 0;
     private Random rand;
-    public int grabLoop = 0;
     private float sumdt = 0;
-    private Sound boom = Gdx.audio.newSound(Gdx.files.internal("boom.wav"));
-    //    private Sound boom2=Gdx.audio.newSound(Gdx.files.internal("boom2.wav"));
+    private Sound boom = Gdx.audio.newSound(Gdx.files.internal("boom.wav")); //sound effect variables, stores the wav files in memory
     private Sound boom3 = Gdx.audio.newSound(Gdx.files.internal("boom3.wav"));
     private Sound boom4 = Gdx.audio.newSound(Gdx.files.internal("boom4.wav"));
     private Sound boom5 = Gdx.audio.newSound(Gdx.files.internal("boom5.wav"));
