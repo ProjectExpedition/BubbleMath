@@ -19,7 +19,7 @@ import java.util.Random;
  * @version 0.01 07/08/2016
  */
 public class Atom {
-    private static final int RANGE = 20;            //number of atoms
+    private static final int RANGE = 5;            //number of atoms
     //    private static final int BLUESTARTX = 1280;     //starting x coordinate for blue
     //    private static final int REDSTARTX = 0;         //starting x coordinate for red
     //    private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
@@ -29,6 +29,7 @@ public class Atom {
     private int sizeFinal;              //final bubble size reached in update()
     private float dt;                   //poll time of current (or last) update
     private boolean isRed;              //is it red
+    private boolean toRemove;
     float x_touch_location;             //set as data members to calculate velocity after touch
     float y_touch_location;
     private Sprite sprite;          //sprite container for bubbles
@@ -52,15 +53,13 @@ public class Atom {
         velocity = new Vector2((rand.nextInt(2 * 15) - 15), (rand.nextInt(40) + 80));//set random velocity vector
         sprite = new Sprite(buildTexture(isRed, x));
         setSize(rand.nextInt(RANGE) + 1);
-
         //WIP implementation of shells
-        int i = 0;
+        //int i = 0;
 //        shells = new Array<Sprite>();
 //        while (i <= atomicNumber){
 //            shells.add(sprite);
 //        }
         sprite.setOriginCenter(); //for rotation
-
         //set boundary for collision detection etc.
         circleBound = new Circle(position.x / PlayState.X_SCALE_FACTOR, position.y / PlayState.X_SCALE_FACTOR, (float) sizeCurrent / 2f);
     }
@@ -92,6 +91,7 @@ public class Atom {
      * @param xMoveTo the x coordinate of the field emitter
      */
     public void update(float dt, float xMoveTo) { //dt = amount of time passed since last update
+        if (!is_grabbed){
         this.dt = dt;
         float distance = (xMoveTo) - circleBound.x * PlayState.X_SCALE_FACTOR + 30; //30*2 = sze of beam
         if (distance > 0) {
@@ -107,9 +107,10 @@ public class Atom {
             scaleFactor += dt / 2; //collect dt
         }
         position.add(velocity.x, velocity.y);
+        velocity.scl(1 / dt);
+        }
         circleBound.set((position.x) / PlayState.X_SCALE_FACTOR, (position.y) / PlayState.Y_SCALE_FACTOR, sizeCurrent / PlayState.X_SCALE_FACTOR / 2f);
         cornerCollision(); //detect collision after coordinates updated
-        velocity.scl(1 / dt);
     }
 
     /**
@@ -197,7 +198,7 @@ public class Atom {
         //scaleFactor = -atomicNumber/newMass;
         atomicNumber = newMass;
         sizeFinal = (int) Math.round(sprite.getWidth() * (0.4 + (0.6 * atomicNumber) / RANGE));
-        sizeFinal = sizeFinal * 250 / 570; //ratio to get large atom (570) to normal atom (250)
+        sizeFinal = sizeFinal * 200 / 570; //ratio to get large atom (570) to normal atom (250)
         sizeCurrent = sizeFinal;
     }
 
@@ -213,7 +214,7 @@ public class Atom {
     /**
      * Detects collisions with the edges of the screen
      */
-    public void cornerCollision() {
+    private void cornerCollision() {
         if ((position.y < sizeCurrent / 2)) {
             position.y = sizeCurrent / 2;
             velocity.y = -velocity.y;
@@ -222,14 +223,17 @@ public class Atom {
             velocity.y = -velocity.y;
             position.y = Atomsly.HEIGHT - sizeCurrent / 2;
         }
-        if (position.x < sizeCurrent / 2) {
-            position.x = sizeCurrent / 2;
-            velocity.x = 0;
+    }
+
+    public boolean NullFieldCollision(){
+        float width = 65;
+        if (position.x < (sizeCurrent / 2) + width) {
+            return true;
         }
-        if (position.x > (Atomsly.WIDTH - sizeCurrent / 2)) {
-            position.x = Atomsly.WIDTH - sizeCurrent / 2;
-            velocity.x = 0;
+        if (position.x > (Atomsly.WIDTH - sizeCurrent / 2) - width) {
+            return true;
         }
+        return false;
     }
 
     /**
@@ -257,5 +261,19 @@ public class Atom {
      */
     public int getAtomicNumber() {
         return atomicNumber;
+    }
+
+    public boolean isRed() {
+        return isRed;
+    }
+
+    public boolean isToRemove() {
+        return toRemove;
+    }
+
+    public void setToRemove(boolean toRemove) {
+        if (!this.toRemove){ //if () here to ignore a false overwrite
+            this.toRemove = toRemove;
+        }
     }
 }
