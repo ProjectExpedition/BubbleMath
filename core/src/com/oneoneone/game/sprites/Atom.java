@@ -21,8 +21,8 @@ import java.util.Random;
 public class Atom {
     private static final int RANGE = 20;            //number of atoms
     //    private static final int BLUESTARTX = 1280;     //starting x coordinate for blue
-//    private static final int REDSTARTX = 0;         //starting x coordinate for red
-//    private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
+    //    private static final int REDSTARTX = 0;         //starting x coordinate for red
+    //    private static final int BUOYANCY = 1;          //velocity added each update to give effect of buoyancy
     private int atomicNumber;           //random "mass" of the bubble used to generate number in bubble and size
     private int sizeCurrent = 0;        //current bubble size calculated in update()
     private float scaleFactor = 0;      //the scaling factor used to reach final size

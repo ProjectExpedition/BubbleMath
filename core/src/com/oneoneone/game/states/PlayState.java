@@ -52,10 +52,11 @@ public class PlayState extends State {
 
 //    private ShapeRenderer SR;
 
+    /**
+     * Allocates memory and calls constructors, David needs to finish this one
+     * @param gsm
+     */
     public PlayState(GameStateManager gsm) {
-        /* PlayState(GameStateManager gsm) is called after Menu State
-        * Allocates memory and calls constructors for all data members.
-        */
         super(gsm); //super = active state class
         buildFont();
         buildTextures();
@@ -66,6 +67,9 @@ public class PlayState extends State {
 //        SR = new ShapeRenderer();
     }
 
+    /**
+     * Builds atom and explosion arrays and field emitters
+     */
     private void buildObjects() {
         redArray = new Array<Atom>();
         blueArray = new Array<Atom>();
@@ -77,6 +81,9 @@ public class PlayState extends State {
         blueField = new FieldEmitters(blueEnergyBand.getPosition(), false);
     }
 
+    /**
+     * Builds the fonts
+     */
     private void buildFont() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -86,6 +93,9 @@ public class PlayState extends State {
         generator.dispose(); //no longer needed
     }
 
+    /**
+     * Loads sprite and background textures into memory
+     */
     private void buildTextures() {
         redSpawner = new Texture("RPipe.png");
         blueSpawner = new Texture("BPipe.png");
@@ -94,11 +104,11 @@ public class PlayState extends State {
         background = new Texture("bg.png");
     }
 
+    /**
+     * Handles touch inputs. Detects and manages a maximum of 2 touch pointers
+     */
     @Override
     protected void handleInput() {
-        /* handleInput() checks if the person has touched the screen
-        *  A maximum of 2 touch pointers are counted
-        */
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int x, int y, int pointer, int button) {
@@ -144,6 +154,9 @@ public class PlayState extends State {
         });
     }
 
+    /**
+     * Spawns the atoms when counter is ready
+     */
     private void doSpawn() {
         if ((timeKeeper > 8) || (redArray.size + blueArray.size == 0) && (timeKeeper > 1)) { //if a certain number of poll times have passed spawn a bubble
             //if (redArray.size < 3) {
@@ -156,6 +169,9 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * Handles atom collisions and destruction
+     */
     private void annihilate() {
         //        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
 //        Vector2 unitNormal = new Vector2();
@@ -246,17 +262,21 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * Plays the boom sound for explosions
+     * @param volume value for volume based on Atom size
+     */
     private void playBoom(float volume) {
         volume = (float) (0.4 + (0.6 * volume) / Atom.getRANGE());
         boom5.play(volume);
     }
 
+    /**
+     * Called by the GameStateManager. Calls methods to update all objects and values each tick
+     * @param dt change in time
+     */
     @Override
     public void update(float dt) {
-        /* update(float dt) is called in GameStateManager (see states.peek().update(dt))
-        * updates the mathematics of everything that happens; velocity, coordinates, inputs,
-        * checking,etc
-        */
         handleInput(); //calls first to see if screen has been touched before updating
         timeKeeper += dt; //sums poll time
         doSpawn();
@@ -283,6 +303,9 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * calculates the sum of the values of the atoms for score keeping
+     */
     private void findSum() {
         sumRed = 0; //reset sum
         for (int i = 0; i < redArray.size; i++) {
@@ -294,6 +317,10 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * updates the energy field positions
+     * @param dt
+     */
     private void updateField(float dt) {
         sumdt += dt;
         float constraint = sumdt / 100;
@@ -307,11 +334,12 @@ public class PlayState extends State {
         //blueEnergyBandMoveToPosition = (((float)Atomsly.WIDTH+200)/2f) * Bprop;
     }
 
+    /**
+     * Renders all sprites and textures to SpriteBatch
+     * @param sb sprite batch
+     */
     @Override
     public void render(SpriteBatch sb) {
-        /* render(float dt) draws all sprites to SpriteBatch declared in Atomsly
-        * draws after all positions and conditions have been calculated in update in Atomsly render
-        */
         if (/*(score == 1) ||*/ (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)) {
             fieldSound.stop();
             gsm.get(new MenuState(gsm));
@@ -383,6 +411,9 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * Clears memory
+     */
     @Override
     public void dispose() {
         background.dispose();
