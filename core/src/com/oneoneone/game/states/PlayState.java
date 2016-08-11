@@ -27,6 +27,7 @@ import com.oneoneone.game.sprites.NullField;
  * @version 0.01 07/08/2016
  */
 public class PlayState extends State {
+    public static final int BAND_OFFSET = 200;
     public static final int SCREEN_WIDTH = Gdx.graphics.getWidth();
     public static final int SCREEN_HEIGHT = Gdx.graphics.getHeight();
     public static final float X_SCALE_FACTOR = (float) Atomsly.WIDTH / SCREEN_WIDTH;
@@ -34,10 +35,11 @@ public class PlayState extends State {
     private static final int FONT_SIZE = 100;
     private static final int GOAL_MIN = 5;
     private static final int GOAL_MAX = 20;
-    private static final int BAND_OFFSET = 200;
+    private static final float TIME_LIMIT = 200; //seconds, round time limit
     private int sumRed = 0, sumBlue = 0, goal, score = 0; // Integer values to store score values
     private Texture background, redSpawner, blueSpawner, redSpawner2, blueSpawner2;//Texture variables for sprites
     private float timeKeeper = 0; //collects amount of time that has passed in game
+    private float elapsedTime = 0; //does same as timekeeper for different function
     private Array<Atom> redArray, blueArray; //Arrays to store atoms, redArray stores read atoms, blue stores blue atoms
     private Array<Explosions> explosions; // Array to store explosion effect emitters
     private EnergyBand redEnergyBand, blueEnergyBand; //variable names for energy bands
@@ -45,7 +47,6 @@ public class PlayState extends State {
     private BitmapFont font;
     private BitmapFont font2;
     private Random rand;
-    private float elapsedTime = 0;
     private Sound boom = Gdx.audio.newSound(Gdx.files.internal("boom.wav")); //sound effect variables, stores the wav files in memory
     private Sound boom3 = Gdx.audio.newSound(Gdx.files.internal("boom3.wav"));
     private Sound boom4 = Gdx.audio.newSound(Gdx.files.internal("boom4.wav"));
@@ -53,15 +54,14 @@ public class PlayState extends State {
     private Sound fieldSound = Gdx.audio.newSound(Gdx.files.internal("field.wav"));
     private NullField leftNullField;
     private NullField rightNullField;
-
 //    private ShapeRenderer SR;
 
-    /**
-     * Allocates memory and calls constructors, David needs to finish this one
-     *
-     * @param gsm
-     */
     public PlayState(GameStateManager gsm) {
+        /**
+         * Allocates memory and calls constructors, David needs to finish this one
+         *
+         * @param gsm
+         */
         super(gsm); //super = active state class
         buildFont();
         buildTextures();
@@ -72,10 +72,10 @@ public class PlayState extends State {
 //        SR = new ShapeRenderer();
     }
 
-    /**
-     * Builds atom and explosion arrays and field emitters
-     */
     private void buildObjects() {
+        /**
+         * Builds atom and explosion arrays and field emitters
+         */
         redArray = new Array<Atom>();
         blueArray = new Array<Atom>();
         explosions = new Array<Explosions>();
@@ -89,10 +89,10 @@ public class PlayState extends State {
         blueField = new FieldEmitters(blueEnergyBand.getPosition(), false);
     }
 
-    /**
-     * Builds the fonts
-     */
     private void buildFont() {
+        /**
+         * Builds the fonts
+         */
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = FONT_SIZE;
@@ -103,10 +103,10 @@ public class PlayState extends State {
         generator.dispose(); //no longer needed
     }
 
-    /**
-     * Loads sprite and background textures into memory
-     */
     private void buildTextures() {
+        /**
+         * Loads sprite and background textures into memory
+         */
         redSpawner = new Texture("RPipe.png");
         blueSpawner = new Texture("BPipe.png");
         redSpawner2 = new Texture("RHole.png");
@@ -114,11 +114,11 @@ public class PlayState extends State {
         background = new Texture("bg.png");
     }
 
-    /**
-     * Handles touch inputs. Detects and manages a maximum of 2 touch pointers
-     */
     @Override
     protected void handleInput() {
+        /**
+         * Handles touch inputs. Detects and manages a maximum of 2 touch pointers
+         */
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int x, int y, int pointer, int button) {
@@ -164,10 +164,10 @@ public class PlayState extends State {
         });
     }
 
-    /**
-     * Spawns the atoms when counter is ready
-     */
     private void doSpawn() {
+        /**
+         * Spawns the atoms when counter is ready
+         */
         boolean debug_NoLimit = false; //here just to make life easier
         int debug_spawnLimit = 10;
         int debug_spawnTime = 5;
@@ -182,17 +182,16 @@ public class PlayState extends State {
         }
     }
 
-    /**
-     * Handles sounds and particle effects TODO 4 neatness
-     */
-    private void specialEffects(){
-
+    private void specialEffects() {
+        /**
+         * Handles sounds and particle effects TODO 4 neatness
+         */
     }
 
-    /**
-     * Handles atom collisions and destruction
-     */
     private void annihilate() {
+        /**
+         * Handles atom collisions and destruction
+         */
         //        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
 //        Vector2 unitNormal = new Vector2();
 //        Vector2 unitTangent = new Vector2();
@@ -209,7 +208,6 @@ public class PlayState extends State {
         int blueMass, redMass;
         for (int i = 0; i < redArray.size; i++) {
             for (int k = 0; k < blueArray.size; k++) {
-
 //                try {
 //                    collision = redArray.get(i).getCircleBound().overlaps((blueArray.get(k).getCircleBound()));
 //                } catch (Exception iob) { //catch if index is out of bounds
@@ -233,17 +231,15 @@ public class PlayState extends State {
                         playBoom(redMass);
                         playBoom(blueMass);
                     } else if (blueMass > redMass) { //removes the red and resizes the blue if the blue is larger
-                        blueMass = blueMass - redMass;
                         explosions.add(new Explosions(redArray.get(i).getPosition(), true, redMass));
-                        blueArray.get(k).setSize(blueMass);
+                        blueArray.get(k).setSize(blueMass - redMass);
                         redArray.get(i).setToRemove(true);
 //                        redArray.removeIndex(i);
 //                        i = i - 1;
                         playBoom(redMass);
                     } else { //removes the blue and resizes the red if red is bigger
-                        redMass = redMass - blueMass;
                         explosions.add(new Explosions(blueArray.get(k).getPosition(), false, blueMass));
-                        redArray.get(i).setSize(redMass);
+                        redArray.get(i).setSize(redMass - blueMass);
                         blueArray.get(k).setToRemove(true);
 //                        blueArray.removeIndex(k);
 //                        k = k - 1;
@@ -288,7 +284,6 @@ public class PlayState extends State {
 //                        bubbles.removeIndex(k);
             }
         }
-
         for (int k = 0; k < blueArray.size; k++) {
             if (blueArray.get(k).isToRemove()) {
                 blueArray.removeIndex(k);
@@ -303,23 +298,23 @@ public class PlayState extends State {
         }
     }
 
-    /**
-     * Plays the boom sound for explosions
-     *
-     * @param volume value for volume based on Atom size
-     */
     private void playBoom(float volume) {
+        /**
+         * Plays the boom sound for explosions
+         *
+         * @param volume value for volume based on Atom size
+         */
         volume = (float) (0.4 + (0.6 * volume) / Atom.getRANGE());
         boom5.play(volume);
     }
 
-    /**
-     * Called by the GameStateManager. Calls methods to update all objects and values each tick
-     *
-     * @param dt change in time
-     */
     @Override
     public void update(float dt) {
+        /**
+         * Called by the GameStateManager. Calls methods to update all objects and values each tick
+         *
+         * @param dt change in time
+         */
         handleInput(); //calls first to see if screen has been touched before updating
         timeKeeper += dt; //sums poll time
         doSpawn();
@@ -346,10 +341,10 @@ public class PlayState extends State {
         }
     }
 
-    /**
-     * calculates the sum of the values of the atoms for score keeping
-     */
     private void findSum() {
+        /**
+         * calculates the sum of the values of the atoms for score keeping
+         */
         sumRed = 0; //reset sum
         for (int i = 0; i < redArray.size; i++) {
             sumRed += redArray.get(i).getAtomicNumber();
@@ -360,41 +355,38 @@ public class PlayState extends State {
         }
     }
 
-    /**
-     * updates the energy field positions
-     *
-     * @param dt
-     */
     private void updateField(float dt) {
-        if (goal == (sumRed+sumBlue)){
+        /**
+         * updates the energy field positions
+         *
+         * @param dt
+         */
+        if (goal == (sumRed + sumBlue)) {
             elapsedTime = 0;
         }
         elapsedTime += dt; //find elapsed time
-
-        float initialBandOffset = 200; //Offset from centre
-        float timeLimit = 200; //seconds, round time limit
-        float timeConstraint = elapsedTime / timeLimit; //proportion of time limit reached,
-        float Rprop = 1 - timeConstraint; //move band left as time increases (1 places band near middle, reducing this causes xpos to approach 0)
-        float Bprop = 1 + timeConstraint; //move band right as time increases
-        float midPoint = Atomsly.WIDTH / 2;
-        redEnergyBand.setPosition((midPoint - BAND_OFFSET) * Rprop);
-        blueEnergyBand.setPosition((midPoint + BAND_OFFSET) * Bprop);
+        redEnergyBand.setMoveToPosition(true, elapsedTime / TIME_LIMIT);
+        blueEnergyBand.setMoveToPosition(false, elapsedTime / TIME_LIMIT);
         redField.setPosition(redEnergyBand.getPosition());
         blueField.setPosition(blueEnergyBand.getPosition());
     }
 
-    /**
-     * Renders all sprites and textures to SpriteBatch
-     *
-     * @param sb sprite batch
-     */
-    @Override
-    public void render(SpriteBatch sb) {
+    public void gameOverCheck() {
         if (/*(score == 1) ||*/ (redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)) {
             fieldSound.stop();
             gsm.get(new MenuState(gsm));
             dispose();
         }
+    }
+
+    @Override
+    public void render(SpriteBatch sb) {
+        /**
+         * Renders all sprites and textures to SpriteBatch
+         *
+         * @param sb sprite batch
+         */
+        gameOverCheck();
         sb.begin();
         sb.draw(background, 0, 0);
         font.setColor(new Color(205f, 169f, 219f, 255f));
@@ -415,26 +407,32 @@ public class PlayState extends State {
 //        sb.draw(blueEnergyBand.getTexture(), blueEnergyBand.getPosition() - blueEnergyBand.getTexture().getWidth() / 2, 0); //blueEnergyBandMoveToPosition - (float) blueBand.getWidth()/2f, 0);
         font.setColor(com.badlogic.gdx.graphics.Color.RED);
         for (Atom bub : redArray) {
-//            Sprite sprite = bub.getSprite();
-//            sb.draw(sprite, bub.getPosition().x, bub.getPosition().y, sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
-            sb.draw(bub.getSprite(), bub.getPosition().x - bub.getSizeCurrent() / 2, bub.getPosition().y - bub.getSizeCurrent() / 2,
+            sb.draw(bub.getSprite(), bub.getPosition().x - bub.getSizeCurrent() / 2,
+                    bub.getPosition().y - bub.getSizeCurrent() / 2,
                     bub.getSizeCurrent(), bub.getSizeCurrent());
-
             if (bub.getAtomicNumber() < 10) {
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x - FONT_SIZE / 4, bub.getPosition().y + FONT_SIZE / 2);
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()),
+                        bub.getPosition().x - FONT_SIZE / 4,
+                        bub.getPosition().y + FONT_SIZE / 2);
             } else {
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x - FONT_SIZE / 2, bub.getPosition().y + FONT_SIZE / 2);
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()),
+                        bub.getPosition().x - FONT_SIZE / 2,
+                        bub.getPosition().y + FONT_SIZE / 2);
             }
         }
         font.setColor(com.badlogic.gdx.graphics.Color.BLUE);
         for (Atom bub : blueArray) {
-            sb.draw(bub.getSprite(), bub.getPosition().x - bub.getSizeCurrent() / 2, bub.getPosition().y - bub.getSizeCurrent() / 2,
+            sb.draw(bub.getSprite(), bub.getPosition().x - bub.getSizeCurrent() / 2,
+                    bub.getPosition().y - bub.getSizeCurrent() / 2,
                     bub.getSizeCurrent(), bub.getSizeCurrent());
-
             if (bub.getAtomicNumber() < 10) {
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x - FONT_SIZE / 4, bub.getPosition().y + FONT_SIZE / 2);
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()),
+                        bub.getPosition().x - FONT_SIZE / 4,
+                        bub.getPosition().y + FONT_SIZE / 2);
             } else {
-                font.draw(sb, Integer.toString(bub.getAtomicNumber()), bub.getPosition().x - FONT_SIZE / 2, bub.getPosition().y + FONT_SIZE / 2);
+                font.draw(sb, Integer.toString(bub.getAtomicNumber()),
+                        bub.getPosition().x - FONT_SIZE / 2,
+                        bub.getPosition().y + FONT_SIZE / 2);
             }
         }
         sb.draw(redSpawner, redEnergyBand.getPosition() - redSpawner.getWidth() / 2, -70);
@@ -457,18 +455,14 @@ public class PlayState extends State {
         if (sumRed + sumBlue == goal) {
             goal = rand.nextInt(50 - 10) + 10;
             score++;
-            if (/*(score == 3) || */(redEnergyBand.getPosition() <= 0) || (blueEnergyBand.getPosition() >= Atomsly.WIDTH)) {
-                gsm.get(new MenuState(gsm));
-                dispose();
-            }
         }
     }
 
-    /**
-     * Clears memory
-     */
     @Override
     public void dispose() {
+        /**
+         * Clears memory
+         */
         background.dispose();
         font.dispose();
         redArray.clear();

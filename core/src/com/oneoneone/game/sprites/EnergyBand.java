@@ -2,6 +2,7 @@ package com.oneoneone.game.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.oneoneone.game.Atomsly;
+import com.oneoneone.game.states.PlayState;
 
 /**
  * EnergyBand.java
@@ -13,25 +14,22 @@ import com.oneoneone.game.Atomsly;
  */
 public class EnergyBand {
     private float velocity;
-    private float positionMoveTo;
+    private float bandMovesTo;
     private float position;
     private boolean isRed;
-    private Texture texture;
 
     public EnergyBand(float x) {
         isRed = x < Atomsly.WIDTH / 2;
         if (isRed) {
-            texture = new Texture("red_field.png");
-            positionMoveTo = x;
+            bandMovesTo = x;
         } else {
-            texture = new Texture("blue_field.png");
-            positionMoveTo = x;
+            bandMovesTo = x;
         }
         position = x;
     }
 
     public void update(float dt) {
-        float distance = positionMoveTo - position;
+        float distance = bandMovesTo - position;
         if (distance > 0) {
             velocity = distance;
         } else if (distance < 0) {
@@ -48,11 +46,11 @@ public class EnergyBand {
         return position;
     }
 
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public void setPosition(float position) {
-        this.positionMoveTo = position;
+    public void setMoveToPosition(boolean isRed, float timeConstraint) {
+        if (isRed) {
+            bandMovesTo = (1 - timeConstraint) * (Atomsly.WIDTH / 2 - PlayState.BAND_OFFSET);
+        } else {
+            bandMovesTo = (1 + timeConstraint)*(Atomsly.WIDTH / 2 + PlayState.BAND_OFFSET);
+        }
     }
 }

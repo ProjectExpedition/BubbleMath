@@ -16,17 +16,14 @@ import com.oneoneone.game.Atomsly;
 public class NullField {
     private Sprite sprite;
     private Vector2 position;
-    //private Rectangle rectangleBound;
 
-    public NullField(boolean isRed){
-        if (isRed){
+    public NullField(boolean isRed) {
+        if (isRed) {
             sprite = new Sprite(new Texture("null_field.png"));
-            position = new Vector2(0,0);
-            //rectangleBound = new Rectangle(0,0,sprite.getWidth(),sprite.getHeight());
+            position = new Vector2(0, 0);
         } else {
             sprite = new Sprite(new Texture("null_field.png"));
-            position = new Vector2(Atomsly.WIDTH - sprite.getWidth(),0);
-            //rectangleBound = new Rectangle(Atomsly.WIDTH - sprite.getWidth(),0,sprite.getWidth(),sprite.getHeight());
+            position = new Vector2(Atomsly.WIDTH - sprite.getWidth(), 0);
         }
     }
 
@@ -37,8 +34,4 @@ public class NullField {
     public Vector2 getPosition() {
         return position;
     }
-
-//    public Rectangle getRectangleBound() {
-//        return rectangleBound;
-//    }
 }
