@@ -56,12 +56,13 @@ public class PlayState extends State {
     private NullField rightNullField;
 //    private ShapeRenderer SR;
 
+    /**
+     * Allocates memory and calls constructors, David needs to finish this one
+     *
+     * @param gsm
+     */
     public PlayState(GameStateManager gsm) {
-        /**
-         * Allocates memory and calls constructors, David needs to finish this one
-         *
-         * @param gsm
-         */
+
         super(gsm); //super = active state class
         buildFont();
         buildTextures();
@@ -72,10 +73,11 @@ public class PlayState extends State {
 //        SR = new ShapeRenderer();
     }
 
+    /**
+     * Builds atom and explosion arrays and field emitters
+     */
     private void buildObjects() {
-        /**
-         * Builds atom and explosion arrays and field emitters
-         */
+
         redArray = new Array<Atom>();
         blueArray = new Array<Atom>();
         explosions = new Array<Explosions>();
@@ -89,10 +91,11 @@ public class PlayState extends State {
         blueField = new FieldEmitters(blueEnergyBand.getPosition(), false);
     }
 
+    /**
+     * Builds the fonts
+     */
     private void buildFont() {
-        /**
-         * Builds the fonts
-         */
+
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = FONT_SIZE;
@@ -103,10 +106,11 @@ public class PlayState extends State {
         generator.dispose(); //no longer needed
     }
 
+    /**
+     * Loads sprite and background textures into memory
+     */
     private void buildTextures() {
-        /**
-         * Loads sprite and background textures into memory
-         */
+
         redSpawner = new Texture("RPipe.png");
         blueSpawner = new Texture("BPipe.png");
         redSpawner2 = new Texture("RHole.png");
@@ -114,11 +118,12 @@ public class PlayState extends State {
         background = new Texture("bg.png");
     }
 
+    /**
+     * Handles touch inputs. Detects and manages a maximum of 2 touch pointers
+     */
     @Override
     protected void handleInput() {
-        /**
-         * Handles touch inputs. Detects and manages a maximum of 2 touch pointers
-         */
+
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int x, int y, int pointer, int button) {
@@ -164,10 +169,11 @@ public class PlayState extends State {
         });
     }
 
+    /**
+     * Spawns the atoms when counter is ready
+     */
     private void doSpawn() {
-        /**
-         * Spawns the atoms when counter is ready
-         */
+
         boolean debug_NoLimit = false; //here just to make life easier
         int debug_spawnLimit = 10;
         int debug_spawnTime = 5;
@@ -182,16 +188,18 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * Handles sounds and particle effects TODO 4 neatness
+     */
     private void specialEffects() {
-        /**
-         * Handles sounds and particle effects TODO 4 neatness
-         */
+
     }
 
+    /**
+     * Handles atom collisions and destruction
+     */
     private void annihilate() {
-        /**
-         * Handles atom collisions and destruction
-         */
+
         //        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
 //        Vector2 unitNormal = new Vector2();
 //        Vector2 unitTangent = new Vector2();
@@ -298,23 +306,25 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * Plays the boom sound for explosions
+     *
+     * @param volume value for volume based on Atom size
+     */
     private void playBoom(float volume) {
-        /**
-         * Plays the boom sound for explosions
-         *
-         * @param volume value for volume based on Atom size
-         */
+
         volume = (float) (0.4 + (0.6 * volume) / Atom.getRANGE());
         boom5.play(volume);
     }
 
+    /**
+     * Called by the GameStateManager. Calls methods to update all objects and values each tick
+     *
+     * @param dt change in time
+     */
     @Override
     public void update(float dt) {
-        /**
-         * Called by the GameStateManager. Calls methods to update all objects and values each tick
-         *
-         * @param dt change in time
-         */
+
         handleInput(); //calls first to see if screen has been touched before updating
         timeKeeper += dt; //sums poll time
         doSpawn();
@@ -341,10 +351,11 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * calculates the sum of the values of the atoms for score keeping
+     */
     private void findSum() {
-        /**
-         * calculates the sum of the values of the atoms for score keeping
-         */
+
         sumRed = 0; //reset sum
         for (int i = 0; i < redArray.size; i++) {
             sumRed += redArray.get(i).getAtomicNumber();
@@ -355,12 +366,13 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * updates the energy field positions
+     *
+     * @param dt
+     */
     private void updateField(float dt) {
-        /**
-         * updates the energy field positions
-         *
-         * @param dt
-         */
+
         if (goal == (sumRed + sumBlue)) {
             elapsedTime = 0;
         }
@@ -379,13 +391,14 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * Renders all sprites and textures to SpriteBatch
+     *
+     * @param sb sprite batch
+     */
     @Override
     public void render(SpriteBatch sb) {
-        /**
-         * Renders all sprites and textures to SpriteBatch
-         *
-         * @param sb sprite batch
-         */
+
         gameOverCheck();
         sb.begin();
         sb.draw(background, 0, 0);
@@ -458,11 +471,12 @@ public class PlayState extends State {
         }
     }
 
+    /**
+     * Clears memory
+     */
     @Override
     public void dispose() {
-        /**
-         * Clears memory
-         */
+
         background.dispose();
         font.dispose();
         redArray.clear();

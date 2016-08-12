@@ -40,13 +40,14 @@ public class Atom {
     public int grabbed_by;
     private Array<Sprite> shells;
 
+    /**
+     * Atom() creates an instance of a bubble sprite for the array.
+     *
+     * @param isRed true or false check, false is blue
+     * @param x     x coordinate of the emitter when atom is created
+     */
     public Atom(boolean isRed, float x) {
-        /**
-         * Atom() creates an instance of a bubble sprite for the array.
-         *
-         * @param isRed true or false check, false is blue
-         * @param x     x coordinate of the emitter when atom is created
-         */
+
         //Check if atom is red or blue and intializes variables for the bubble
         this.isRed = isRed;
         Random rand = new Random();
@@ -65,14 +66,15 @@ public class Atom {
         circleBound = new Circle(position.x / PlayState.X_SCALE_FACTOR, position.y / PlayState.X_SCALE_FACTOR, (float) sizeCurrent / 2f);
     }
 
+    /**
+     * Assigns the texture file for the atom, blue or red, and creates the postion vector.
+     * The y coordinate is set the top of the screen for blue and bottom for red
+     *
+     * @param x     x coordinate of the emitter at the time
+     * @return texture file name
+     */
     public Texture buildTexture(float x) {
-        /**
-         * Assigns the texture file for the atom, blue or red, and creates the postion vector.
-         * The y coordinate is set the top of the screen for blue and bottom for red
-         *
-         * @param x     x coordinate of the emitter at the time
-         * @return texture file name
-         */
+
         Texture texture;
         if (isRed) {
             texture = new Texture("red.png");
@@ -84,13 +86,14 @@ public class Atom {
         return texture;
     }
 
+    /**
+     * Called by PlayState.java to recalculate the positions and sizes atoms each tick
+     *
+     * @param dt      the change in time
+     * @param xMoveTo the x coordinate of the field emitter
+     */
     public void update(float dt, float xMoveTo) { //dt = amount of time passed since last update
-        /**
-         * Called by PlayState.java to recalculate the positions and sizes atoms each tick
-         *
-         * @param dt      the change in time
-         * @param xMoveTo the x coordinate of the field emitter
-         */
+
         if (!is_grabbed){
         this.dt = dt;
         float distance = (xMoveTo) - circleBound.x * PlayState.X_SCALE_FACTOR + 30; //30*2 = sze of beam
@@ -113,21 +116,23 @@ public class Atom {
         cornerCollision(); //detect collision after coordinates updated
     }
 
+    /**
+     * Gets the postion of an atom
+     *
+     * @return atom's position vector
+     */
     public Vector2 getPosition() {
-        /**
-         * Gets the postion of an atom
-         *
-         * @return atom's position vector
-         */
+
         return position;
     }
 
+    /**
+     * checks the position of an atom relative to a touch location
+     *
+     * @param pointer the pointer being check against
+     */
     public void grabBubble(int pointer) {
-        /**
-         * checks the position of an atom relative to a touch location
-         *
-         * @param pointer the pointer being check against
-         */
+
         //the following retrieve the x and y coordinates of the current touch.
         x_touch_location = PlayState.X_SCALE_FACTOR * (Gdx.input.getX(pointer));
         y_touch_location = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - Gdx.input.getY(pointer));
@@ -142,14 +147,15 @@ public class Atom {
         }
     }
 
+    /**
+     * drags a bubble when a drag event is detected
+     *
+     * @param x       x coordinate of drag event
+     * @param y       y coordinate of drag event
+     * @param pointer pointer being dragged unused atm
+     */
     public void dragBubble(float x, float y, int pointer) {
-        /**
-         * drags a bubble when a drag event is detected
-         *
-         * @param x       x coordinate of drag event
-         * @param y       y coordinate of drag event
-         * @param pointer pointer being dragged unused atm
-         */
+
         position.x = PlayState.X_SCALE_FACTOR * x;
         position.y = PlayState.Y_SCALE_FACTOR * (PlayState.SCREEN_HEIGHT - y);
         velocity.set(0, 0);
@@ -169,50 +175,54 @@ public class Atom {
 
     }
 
+    /**
+     * resets the is_grabbed state when a touch is released
+     *
+     * @param pointer the pointer being checked
+     */
     public void releaseBubble(int pointer) {
-        /**
-         * resets the is_grabbed state when a touch is released
-         *
-         * @param pointer the pointer being checked
-         */
+
         if (grabbed_by == pointer) {
             is_grabbed = false;
         }
     }
-
+    /**
+     * Gets the circle bound of the atom for collision detection
+     *
+     * @return the bound of the atom
+     */
     public Circle getCircleBound() {
-        /**
-         * Gets the circle bound of the atom for collision detection
-         *
-         * @return the bound of the atom
-         */return circleBound;
-    }
 
+         return circleBound;
+    }
+    /**
+     * Sets the size of the current Atom to a new value
+     *
+     * @param newMass new mass of the atom
+     */
     public void setSize(int newMass) {
-        /**
-         * Sets the size of the current Atom to a new value
-         *
-         * @param newMass new mass of the atom
-         */
+
         atomicNumber = newMass;
         sizeFinal = (int) Math.round(sprite.getWidth() * (0.4 + (0.6 * atomicNumber) / RANGE));
         sizeFinal = sizeFinal * 200 / 570; //ratio to get large atom (570) to normal atom (250)
         sizeCurrent = sizeFinal;
     }
 
+    /**
+     * Gets the current bubble value range
+     *
+     * @return RANGE the current range value
+     */
     public static int getRANGE() {
-        /**
-         * Gets the current bubble value range
-         *
-         * @return RANGE the current range value
-         */
+
         return RANGE;
     }
 
+    /**
+     * Detects collisions with the top and bottom of the screen
+     */
     private void cornerCollision() {
-        /**
-         * Detects collisions with the top and bottom of the screen
-         */
+
         if ((position.y < sizeCurrent / 2)) {
             position.y = sizeCurrent / 2;
             velocity.y = -velocity.y;
@@ -223,10 +233,11 @@ public class Atom {
         }
     }
 
+    /**
+     * Detects collisions with the NullFIeld
+     */
     public boolean NullFieldCollision(){
-        /**
-         * Detects collisions with the NullFIeld
-         */
+
         float NULL_FIELD_WIDTH = 65;
         if (position.x < (sizeCurrent / 2) + NULL_FIELD_WIDTH) {
             return true;
@@ -237,30 +248,33 @@ public class Atom {
         return false;
     }
 
+    /**
+     * Gets the sprite for the current Atom
+     *
+     * @return sprite
+     */
     public Sprite getSprite() {
-        /**
-         * Gets the sprite for the current Atom
-         *
-         * @return sprite
-         */
+
         return sprite;
     }
 
+    /**
+     * Gets the size of the current atom
+     *
+     * @return sizeCurrent
+     */
     public int getSizeCurrent() {
-        /**
-         * Gets the size of the current atom
-         *
-         * @return sizeCurrent
-         */
+
         return sizeCurrent;
     }
 
+    /**
+     * Gets the number value of the bubble
+     *
+     * @return atomicNumber integer value
+     */
     public int getAtomicNumber() {
-        /**
-         * Gets the number value of the bubble
-         *
-         * @return atomicNumber integer value
-         */
+
         return atomicNumber;
     }
 
@@ -268,12 +282,13 @@ public class Atom {
         return toRemove;
     }
 
+    /**
+     * Sets the atom to be deleted
+     *
+     * @return atomicNumber integer value
+     */
     public void setToRemove(boolean toRemove) {
-        /**
-         * Sets the atom to be deleted
-         *
-         * @return atomicNumber integer value
-         */
+
         if (!this.toRemove){ //if () here to ignore a false overwrite after set to true
             this.toRemove = toRemove;
         }
