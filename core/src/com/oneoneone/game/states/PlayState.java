@@ -198,7 +198,7 @@ public class PlayState extends State {
     /**
      * Handles atom collisions and destruction
      */
-    private void annihilate() {
+    private void detectCollisions() {
 
         //        Vector2 normal = new Vector2(); //allocate memory once to improve eff.
 //        Vector2 unitNormal = new Vector2();
@@ -213,7 +213,6 @@ public class PlayState extends State {
 //        float iMass, kMass;
 //        int redOffset, blueOffset;
         boolean collision;
-        int blueMass, redMass;
         for (int i = 0; i < redArray.size; i++) {
             for (int k = 0; k < blueArray.size; k++) {
 //                try {
@@ -225,36 +224,8 @@ public class PlayState extends State {
                 redArray.get(i).setToRemove(redArray.get(i).NullFieldCollision());
                 collision = redArray.get(i).getCircleBound().overlaps((blueArray.get(k).getCircleBound()));
                 if (collision) {
-                    blueMass = blueArray.get(k).getAtomicNumber();
-                    redMass = redArray.get(i).getAtomicNumber();
-                    if (blueMass == redMass) {  //this clause removes both bubbles if they're equal mass
-                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false, blueMass));
-                        explosions.add(new Explosions(redArray.get(i).getPosition(), true, redMass));
-                        blueArray.get(k).setToRemove(true);
-                        redArray.get(i).setToRemove(true);
-//                        blueArray.removeIndex(k);
-//                        redArray.removeIndex(i);
-//                        i = i - 1; //resetting the iteration here means no bubbles are skipped on the this update
-//                        k = k - 1;
-                        playBoom(redMass);
-                        playBoom(blueMass);
-                    } else if (blueMass > redMass) { //removes the red and resizes the blue if the blue is larger
-                        explosions.add(new Explosions(redArray.get(i).getPosition(), true, redMass));
-                        blueArray.get(k).setSize(blueMass - redMass);
-                        redArray.get(i).setToRemove(true);
-//                        redArray.removeIndex(i);
-//                        i = i - 1;
-                        playBoom(redMass);
-                    } else { //removes the blue and resizes the red if red is bigger
-                        explosions.add(new Explosions(blueArray.get(k).getPosition(), false, blueMass));
-                        redArray.get(i).setSize(redMass - blueMass);
-                        blueArray.get(k).setToRemove(true);
-//                        blueArray.removeIndex(k);
-//                        k = k - 1;
-                        playBoom(blueMass);
-                    }
+                    killBubbles(i, k);
                 }
-                /*collision detection stuff is here*/
 //                        normal.set(bubbles.get(i).getPosition());
 //                        normal.sub(bubbles.get(k).getPosition());
 //                        unitNormal.set(normal);
@@ -306,6 +277,30 @@ public class PlayState extends State {
         }
     }
 
+    private void killBubbles (int i, int k){
+        int blueMass, redMass;
+        blueMass = blueArray.get(k).getAtomicNumber();
+        redMass = redArray.get(i).getAtomicNumber();
+        if (blueMass == redMass) {  //this clause removes both bubbles if they're equal mass
+            explosions.add(new Explosions(blueArray.get(k).getPosition(), false, blueMass));
+            explosions.add(new Explosions(redArray.get(i).getPosition(), true, redMass));
+            blueArray.get(k).setToRemove(true);
+            redArray.get(i).setToRemove(true);
+            playBoom(redMass);
+            playBoom(blueMass);
+        } else if (blueMass > redMass) { //removes the red and resizes the blue if the blue is larger
+            explosions.add(new Explosions(redArray.get(i).getPosition(), true, redMass));
+            blueArray.get(k).setSize(blueMass - redMass);
+            redArray.get(i).setToRemove(true);
+            playBoom(redMass);
+        } else { //removes the blue and resizes the red if red is bigger
+            explosions.add(new Explosions(blueArray.get(k).getPosition(), false, blueMass));
+            redArray.get(i).setSize(redMass - blueMass);
+            blueArray.get(k).setToRemove(true);
+            playBoom(blueMass);
+        }
+    }
+
     /**
      * Plays the boom sound for explosions
      *
@@ -328,7 +323,7 @@ public class PlayState extends State {
         handleInput(); //calls first to see if screen has been touched before updating
         timeKeeper += dt; //sums poll time
         doSpawn();
-        annihilate();
+        detectCollisions();
         findSum();
         updateField(dt);
         redEnergyBand.update(dt);
@@ -487,10 +482,8 @@ public class PlayState extends State {
         redSpawner.dispose();
         blueSpawner.dispose();
         boom.dispose();
-//        boom2.dispose();
         boom3.dispose();
         boom4.dispose();
-//        boom5.dispose();
         fieldSound.dispose();
     }
 }
